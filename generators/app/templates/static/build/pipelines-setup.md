@@ -10,12 +10,10 @@ _NOTE:_ This setup currently only works with the "Org Development Model" (manife
 
 1. Make it easy to validate changes on Pull Request
 2. Handle 75-90% of deployments automatically. Exceptions:
-
-- Metadata not tracked in source control (email template, etc
-- Complex destructive changes
-- Profile configurations
-- Data configuration
-
+   - Metadata not tracked in source control (email template, etc
+   - Complex destructive changes
+   - Profile configurations
+   - Data configuration
 3. Only Deploy metadata that has changed.
 4. Make it impossible to overwrite changes that have been introduced outside of our source control (dang :wombats:)
 5. Keep `master` in sync with production
