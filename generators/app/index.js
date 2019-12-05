@@ -10,21 +10,15 @@ module.exports = class extends Generator {
 
   prompting() {
     // Have Yeoman greet the user.
-    this.log(yosay(`Hello World`));
+    this.log(yosay(`Callaway Cloud SFDX Project`));
 
     const prompts = [
-      {
-        type: "confirm",
-        name: "preCommitPrettier",
-        message: "Run Prettier on pre-commit",
-        default: true
-      },
-      {
-        type: "confirm",
-        name: "pipelines",
-        message: "Create Bitbucket Pipelines",
-        default: true
-      }
+      // {
+      //   type: "confirm",
+      //   name: "preCommitPrettier",
+      //   message: "Run Prettier on pre-commit",
+      //   default: true
+      // }
     ];
 
     return this.prompt(prompts).then(props => {
