@@ -23,12 +23,12 @@ _NOTE:_ This setup currently only works with the "Org Development Model" (manife
 
 ### Build Scripts
 
-The easiest way to add this pipeline to a project is to use the callaway yeoman generator:
+The easiest way to add this pipeline to a project is to use the [callaway yeoman generator](https://github.com/ChuckJonas/generator-ccc):
 
 1. run `npm install -g yeoman`
 2. run `npm install -g generator-ccc`
-3. navigate to project root
-4. run `npm yo ccc`
+3. `cd` to project
+4. run `yo ccc`
 
 Alternately, you could copy the `build` folder & `bitbucket-pipelines.yml` to your project.
 
