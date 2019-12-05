@@ -1,0 +1,61 @@
+image: salesforce/salesforcedx:7.33.2-full
+
+clone:
+  depth: full
+
+pipelines:
+  # See https://www.lucidchart.com/invitations/accept/7d58d35d-ddbe-409e-8e7b-a1bf280069d7 for trouble shooting
+  pull-requests:
+    "**":
+      - step:
+          name: "Build Package"
+          script:
+            - ./build/setup.sh
+            - ./build/sync.sh
+            - ./build/package.sh
+          artifacts:
+            - dist/**
+      - step:
+          name: Check Package
+          trigger: manual
+          script:
+            - ./build/setup.sh
+            - DEPLOY_ID=$(sfdx force:mdapi:deploy -d dist/$BITBUCKET_BRANCH -c --json | jq -r .result.id)
+            - echo $DEPLOY_ID
+            - echo $DEPLOY_ID > dist/deploy_id.txt
+            - sfdx force:mdapi:deploy:report --jobid $DEPLOY_ID -w 1000
+          artifacts:
+            - dist/**
+      - step:
+          name: Quick Deploy
+          trigger: manual
+          script:
+            - ./build/setup.sh
+            - DEPLOY_ID=$(cat dist/deploy_id.txt)
+            - echo $DEPLOY_ID
+            - sfdx force:mdapi:deploy -q $DEPLOY_ID -w 1000
+            - ./build/merge.sh
+  custom:
+    Sync Production:
+      - step:
+          script:
+            - ./build/setup.sh
+            - ./build/sync.sh
+    Deploy to Production:
+      - step:
+          script:
+            - ./build/setup.sh
+            - ./build/sync.sh
+            - ./build/package.sh
+            - sfdx force:mdapi:deploy -d dist/$BITBUCKET_BRANCH -w 5000 --verbose
+            - ./build/merge.sh
+    Deploy to Production (Selective Tests):
+      - variables: #list variable names under here
+          - name: Tests
+      - step:
+          script:
+            - ./build/setup.sh
+            - ./build/sync.sh
+            - ./build/package.sh
+            - sfdx force:mdapi:deploy -d dist/$BITBUCKET_BRANCH -w 5000 -l RunSpecifiedTests -r $Tests --verbose
+            - ./build/merge.sh
