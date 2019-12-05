@@ -2,6 +2,8 @@
 
 This guide will outline the steps to setup and use a bitbucket pipeline for auto-deployments.
 
+<img width="1370" alt="callawaycloud___realself___Pipelines_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/70212789-2d3d1d80-16f5-11ea-8795-93aac82fdde6.png">
+
 _NOTE:_ This setup currently only works with the "Org Development Model" (Manifest Projects).
 
 ## 💪 Goals
@@ -14,14 +16,14 @@ _NOTE:_ This setup currently only works with the "Org Development Model" (Manife
 - Profile configurations
 - Data configuration
 
-3. Only Deploy the metadata that has changed.
-4. Make it impossible to overwrite changes that have been introduced outside of our source control
-5. Ensure that master is in sync with production
+3. Only Deploy metadata that has changed.
+4. Make it impossible to overwrite changes that have been introduced outside of our source control (dang :wombats:)
+5. Keep `master` in sync with production
 6. Do all of this without overloading the deployment queue
 
 ## 🔧 Setup
 
-### 🔨Build Assets
+### Build Assets
 
 The easiest way to add this pipeline to a project is to use the callaway yeoman generator:
 
@@ -32,16 +34,18 @@ The easiest way to add this pipeline to a project is to use the callaway yeoman 
 
 Alternately, you could copy the `build` folder + `bitbucket-pipelines.yml` to your project.
 
-### 🔑 Environment Setup
+### Environment Setup
 
 1. Authorize the production org with sfdx-cli
 1. Run `sfdx force:org:display --verbose -u your-prod-user`. Copy the returned "Sfdx Auth Url"
 1. Open the repo in bitbucket and navigate to Settings -> Repository variables.
 1. Create a new variable called AUTH_URL. **MAKE SURE TO CHECK THE SECURE OPTION!!!**
 
-## 🌊Pipeline Steps
+## 🌊 Pipeline Steps
 
 ### "Build Package"
+
+**Trigger:** On Pull Request Created/Updated
 
 This is an automatic step that when a pull request is submitted and updated to prepare a deployment package.
 
@@ -61,30 +65,32 @@ Checkout master and locally merge the conflicts. Push and the PR pipeline will a
 
 ### "Check Package"
 
+**Trigger:** Manual
+
 This step preforms a `--CHECKONLY` deployment with the generated package.
 
-⁉️ Missing Metadata Dependencies
+⁉️ **Missing Metadata Dependencies**
 
 - If it's something we track in source control, pull it down/commit/push and try again.
 - Otherwise, you will need to manually deploy it via a changeset or other means.
 
-⁉️ Failed Tests
+⁉️ **Failed Tests**
 
 Ideally you should fix the tests, commit changes, and try again. However, if the test failures are not related to you changes, you can manually run the pipeline with selective tests.
 
-⁉️ Contains destructive changes which cannot be deployed atomicity
+⁉️ **Contains destructive changes which cannot be deployed atomicity**
 
 This may require you to run multiple manual test
 
 ### "Quick Deploy"
 
-This final step:
+**Trigger:** Manual
 
 1. Completes the deployment you previously checked
 2. Merges the current branch into `master`
 
 No additional steps are required to close the pull request, although you might want to delete the remote branch.
 
-⁉️ Deployment Failed
+⁉️ **Deployment Failed**
 
 Most likely the [previously checked deployment is no longer valid](https://salesforce.stackexchange.com/questions/187859/what-operations-would-cause-a-validated-changeset-to-become-invalidated-and-lose).

@@ -4,7 +4,7 @@ Yeoman generator used to setup & upgrade Callaway Salesforce development project
 
 **Configures the following**
 
-1. bitbucket pipelines CI process
+1. [bitbucket pipelines CI process](https://github.com/ChuckJonas/generator-ccc/blob/master/generators/app/templates/static/build/pipelines-setup.md)
 1. prettier (with pre-commit hook)
 1. default `package.xml` manifest
 1. `.gitIgnore`
