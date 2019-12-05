@@ -84,7 +84,7 @@ Ideally you should fix the tests, commit changes, and try again. However, if the
 
 ❗️ **Contains destructive changes which cannot be deployed atomicity**
 
-This may require you to run multiple manual test
+This may require you to run multiple manual deployments.
 
 ### 3: "Quick Deploy"
 
