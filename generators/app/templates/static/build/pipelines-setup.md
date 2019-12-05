@@ -10,11 +10,11 @@ _NOTE:_ This setup currently only works with the "Org Development Model" (manife
 
 1. Make it easy to validate changes on Pull Request
 2. Handle 75-90% of deployments automatically. Exceptions:
-   - Metadata not tracked in source control (email template, etc
+   - Metadata not tracked in source control (email template, named cred, etc)
    - Complex destructive changes
    - Profile configurations
    - Data configuration
-3. Only Deploy metadata that has changed.
+3. Only deploy metadata that has changed.
 4. Make it impossible to overwrite changes that have been introduced outside of our source control (dang :wombats:)
 5. Keep `master` in sync with production
 6. Do all of this without overloading the deployment queue
@@ -79,6 +79,8 @@ This step preforms a `--CHECKONLY` deployment with the generated package.
 ❗️ **Failed Tests**
 
 Ideally you should fix the tests, commit changes, and try again. However, if the test failures are not related to you changes, you can manually run the pipeline with selective tests.
+
+<img width="550" alt="callawaycloud___ci-example-repo___Branches_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/70218930-2ddbb100-1701-11ea-8290-491db3afd2e3.png">
 
 ❗️ **Contains destructive changes which cannot be deployed atomicity**
 
