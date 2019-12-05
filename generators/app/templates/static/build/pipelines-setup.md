@@ -41,6 +41,8 @@ Alternately, you could copy the `build` folder & `bitbucket-pipelines.yml` to yo
 
 ## 🌊 Pipeline Steps
 
+<img width="300" alt="callawaycloud___ci-example-repo___Pipelines_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/70215690-4b0d8100-16fb-11ea-95d5-b7f5b0afc2f5.png">
+
 ### 1: "Build Package"
 
 **Trigger:** Pull Request Created/Updated
@@ -51,15 +53,15 @@ Alternately, you could copy the `build` folder & `bitbucket-pipelines.yml` to yo
 
 After completing, you can inspect the package by downloading the "artifacts".
 
-<img width="968" alt="callawaycloud___ci-example-repo___Pipelines_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/70214463-b6a21f00-16f8-11ea-9530-87dff421d7b5.png">
+<img width="800" alt="callawaycloud___ci-example-repo___Pipelines_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/70214463-b6a21f00-16f8-11ea-9530-87dff421d7b5.png">
 
-⁉️ Merge conflict
+❗️ Merge conflict
 
 If you encounter merge conflicts, that means that a file you've changed in your current branch has also been updated in production by some rogue :wombat:.
 
 Checkout master and locally merge the conflicts. Push and the PR pipeline will automatically run again.
 
-⁉️ Package generation failed
+❗️ Package generation failed
 
 [Possible a bug?](https://github.com/ChuckJonas/sfdx-git-packager/issues)
 
@@ -69,16 +71,16 @@ Checkout master and locally merge the conflicts. Push and the PR pipeline will a
 
 This step preforms a `--CHECKONLY` deployment with the generated package.
 
-⁉️ **Missing Metadata Dependencies**
+❗️ **Missing Metadata Dependencies**
 
 - If it's something we track in source control, pull it down/commit/push and try again.
 - Otherwise, you will need to manually deploy it via a changeset or other means.
 
-⁉️ **Failed Tests**
+❗️ **Failed Tests**
 
 Ideally you should fix the tests, commit changes, and try again. However, if the test failures are not related to you changes, you can manually run the pipeline with selective tests.
 
-⁉️ **Contains destructive changes which cannot be deployed atomicity**
+❗️ **Contains destructive changes which cannot be deployed atomicity**
 
 This may require you to run multiple manual test
 
@@ -91,6 +93,6 @@ This may require you to run multiple manual test
 
 No additional steps are required to close the pull request, although you might want to delete the remote branch.
 
-⁉️ **Deployment Failed**
+❗️ **Deployment Failed**
 
 Most likely the [previously checked deployment is no longer valid](https://salesforce.stackexchange.com/questions/187859/what-operations-would-cause-a-validated-changeset-to-become-invalidated-and-lose).
