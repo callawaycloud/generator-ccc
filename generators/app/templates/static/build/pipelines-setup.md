@@ -4,7 +4,7 @@ This guide will outline the steps to setup and use a bitbucket pipeline for auto
 
 <img width="1370" alt="callawaycloud___realself___Pipelines_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/70212789-2d3d1d80-16f5-11ea-8795-93aac82fdde6.png">
 
-_NOTE:_ This setup currently only works with the "Org Development Model" (Manifest Projects).
+_NOTE:_ This setup currently only works with the "Org Development Model" (manifest package.xml).
 
 ## 💪 Goals
 
@@ -32,24 +32,20 @@ The easiest way to add this pipeline to a project is to use the callaway yeoman 
 3. navigate to project root
 4. run `npm yo ccc`
 
-Alternately, you could copy the `build` folder + `bitbucket-pipelines.yml` to your project.
+Alternately, you could copy the `build` folder & `bitbucket-pipelines.yml` to your project.
 
 ### Environment Setup
 
 1. Authorize the production org with sfdx-cli
 1. Run `sfdx force:org:display --verbose -u your-prod-user`. Copy the returned "Sfdx Auth Url"
-1. Open the repo in bitbucket and navigate to Settings -> Repository variables.
+1. Open the repo in bitbucket and navigate to "Settings -> Repository variables"
 1. Create a new variable called AUTH_URL. **MAKE SURE TO CHECK THE SECURE OPTION!!!**
 
 ## 🌊 Pipeline Steps
 
-### "Build Package"
+### 1: "Build Package"
 
-**Trigger:** On Pull Request Created/Updated
-
-This is an automatic step that when a pull request is submitted and updated to prepare a deployment package.
-
-It does so by preforming the following steps:
+**Trigger:** Pull Request Created/Updated
 
 1. It syncs Production into `master` (using [force:source:clean](https://github.com/ChuckJonas/force-source-clean)) and pushes the changes
 2. It merges `master` into the current branch
@@ -63,7 +59,11 @@ If you encounter merge conflicts, that means that a file you've changed in your 
 
 Checkout master and locally merge the conflicts. Push and the PR pipeline will automatically run again.
 
-### "Check Package"
+⁉️ Package generation failed
+
+[Possible a bug?](https://github.com/ChuckJonas/sfdx-git-packager/issues)
+
+### 2: "Check Package"
 
 **Trigger:** Manual
 
@@ -82,7 +82,7 @@ Ideally you should fix the tests, commit changes, and try again. However, if the
 
 This may require you to run multiple manual test
 
-### "Quick Deploy"
+### 3: "Quick Deploy"
 
 **Trigger:** Manual
 
