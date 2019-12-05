@@ -21,7 +21,7 @@ _NOTE:_ This setup currently only works with the "Org Development Model" (manife
 
 ## 🔧 Setup
 
-### Build Assets
+### Build Scripts
 
 The easiest way to add this pipeline to a project is to use the callaway yeoman generator:
 
@@ -50,6 +50,8 @@ Alternately, you could copy the `build` folder & `bitbucket-pipelines.yml` to yo
 3. It generates an incremental deployment package based on the difference between `master` and the current branch (using [sfdx-git-packager](https://github.com/ChuckJonas/sfdx-git-packager))
 
 After completing, you can inspect the package by downloading the "artifacts".
+
+<img width="968" alt="callawaycloud___ci-example-repo___Pipelines_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/70214463-b6a21f00-16f8-11ea-9530-87dff421d7b5.png">
 
 ⁉️ Merge conflict
 
