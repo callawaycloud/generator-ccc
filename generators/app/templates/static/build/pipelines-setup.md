@@ -30,7 +30,7 @@ The easiest way to add this pipeline to a project is to use the [callaway yeoman
 3. `cd` to project
 4. run `yo ccc`
 
-Alternately, you could copy the `build` folder & `bitbucket-pipelines.yml` to your project.
+Alternately, you could copy the [build folder](https://github.com/ChuckJonas/generator-ccc/tree/master/generators/app/templates/static/build) & [bitbucket-pipelines.yml](https://github.com/ChuckJonas/generator-ccc/blob/master/generators/app/templates/static/bitbucket-pipelines.yml) to your project.
 
 ### Environment Setup
 
