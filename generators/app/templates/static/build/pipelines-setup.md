@@ -74,11 +74,11 @@ This step preforms a `--CHECKONLY` deployment with the generated package.
 ❗️ **Missing Metadata Dependencies**
 
 - If it's something we track in source control, pull it down/commit/push and try again.
-- Otherwise, you will need to manually deploy it via a changeset or other means.
+- Otherwise, you will need to manually deploy it via a changeset (or other means).
 
 ❗️ **Failed Tests**
 
-Ideally you should fix the tests, commit changes, and try again. However, if the test failures are not related to you changes, you can manually run the pipeline with selective tests.
+Ideally you should fix the tests, commit changes, and try again. However, if the test failures are not related to your feature, you can manually run the pipeline with selective tests:
 
 <img width="550" alt="callawaycloud___ci-example-repo___Branches_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/70218930-2ddbb100-1701-11ea-8290-491db3afd2e3.png">
 
