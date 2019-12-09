@@ -25,10 +25,11 @@ _NOTE:_ This setup currently only works with the "Org Development Model" (manife
 
 The easiest way to add this pipeline to a project is to use the [callaway yeoman generator](https://github.com/ChuckJonas/generator-ccc):
 
-1. run `npm install -g yeoman`
+1. run `npm install -g yo`
 2. run `npm install -g generator-ccc`
 3. `cd` to project
 4. run `yo ccc`
+5. run `chmod +x build/*.sh` (working to remove this step)
 
 Alternately, you could copy the [build folder](https://github.com/ChuckJonas/generator-ccc/tree/master/generators/app/templates/static/build) & [bitbucket-pipelines.yml](https://github.com/ChuckJonas/generator-ccc/blob/master/generators/app/templates/static/bitbucket-pipelines.yml) to your project.
 
@@ -36,7 +37,10 @@ Alternately, you could copy the [build folder](https://github.com/ChuckJonas/gen
 
 1. Authorize the production org with sfdx-cli
 1. Run `sfdx force:org:display --verbose -u your-prod-user`. Copy the returned "Sfdx Auth Url"
-1. Open the repo in bitbucket and navigate to "Settings -> Repository variables"
+1. Open the repo in bitbucket
+1. Navigate to "Settings -> Pipelines -> Settings"
+1. Enable Pipelines
+1. Navigate to "Settings -> Pipelines -> Repository variables"
 1. Create a new variable called AUTH_URL. **MAKE SURE TO CHECK THE SECURE OPTION!!!**
 
 ## 🌊 Pipeline Steps

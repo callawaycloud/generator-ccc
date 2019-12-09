@@ -13,7 +13,7 @@ Yeoman generator used to setup & upgrade Callaway Salesforce development project
 
 ## Usage
 
-1. run `npm install -g yeoman`
+1. run `npm install -g yo`
 2. run `npm install -g generator-ccc`
 3. `cd` to project
 4. run `yo ccc`
