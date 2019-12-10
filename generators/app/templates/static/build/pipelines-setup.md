@@ -29,7 +29,8 @@ The easiest way to add this pipeline to a project is to use the [callaway yeoman
 2. run `npm install -g generator-ccc`
 3. `cd` to project
 4. run `yo ccc`
-5. run `chmod +x build/*.sh` (working to remove this step)
+
+**NOTE:** When running from windows, the `build/*.sh` files do not seem to retain their executable permission. You'll need to figure out a way to [make the files linux executable](https://unix.stackexchange.com/questions/256964/transferring-executable-files-from-windows-to-linux-via-winscp) for the pipeline ci to run.
 
 Alternately, you could copy the [build folder](https://github.com/ChuckJonas/generator-ccc/tree/master/generators/app/templates/static/build) & [bitbucket-pipelines.yml](https://github.com/ChuckJonas/generator-ccc/blob/master/generators/app/templates/static/bitbucket-pipelines.yml) to your project.
 
