@@ -111,11 +111,9 @@ module.exports = class extends Generator {
   writeGitIgnore() {
     const ignorePath = this.destinationPath(".gitignore");
     const ignorePaths = ["dist", "node_modules"];
-    try {
-      const gitIgnore = this.fs.read();
-      const lines = new Set([...gitIgnore.split(EOL), ...ignorePaths]);
-      this.fs.write(ignorePath, lines.join(EOL));
-    } catch (e) {}
+    const gitIgnore = this.fs.read(ignorePath);
+    const lines = new Set([...gitIgnore.split(EOL), ...ignorePaths]);
+    this.fs.write(ignorePath, Array.from(lines).join(EOL));
   }
 
   install() {
