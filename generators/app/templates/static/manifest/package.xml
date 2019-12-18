@@ -6,6 +6,10 @@
   </types>
   <types>
     <members>*</members>
+    <name>ApexComponent</name>
+  </types>
+  <types>
+    <members>*</members>
     <name>ApexPage</name>
   </types>
   <types>
