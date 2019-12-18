@@ -44,27 +44,37 @@ module.exports = class extends Generator {
 
   writeNpmPackage() {
     // Extend or create package.json file in destination path
-    const pkgJson = {
-      scripts: {
-        "pretty-all-apex": "npx prettier --write 'src/**/*.{trigger,cls}'",
-        clean: "sfdx force:source:clean",
-        "pkg-branch":
-          "sfdx git:package -d dist/$(git symbolic-ref --short HEAD)"
-      },
-      devDependencies: {
-        husky: "^3.0.9",
-        prettier: "1.19.1",
-        "prettier-plugin-apex": "^1.0.0",
-        "pretty-quick": "^2.0.1"
-      },
-      husky: {
-        hooks: {
-          "pre-commit": "pretty-quick --staged"
+    const npmPackagePath = this.destinationPath("package.json");
+    const oldPkgJson = this.fs.exists(npmPackagePath)
+      ? this.fs.readJSON(npmPackagePath)
+      : {};
+    // if there are key conflicts the rightmost (pkgJson) wins
+    const newPkgJson = {
+      ...oldPkgJson,
+      ...{
+        scripts: {
+          "pretty-all-apex": "npx prettier --write 'src/**/*.{trigger,cls}'",
+          clean: "sfdx force:source:clean",
+          "pkg-branch":
+            "sfdx git:package -d dist/$(git symbolic-ref --short HEAD)"
+        },
+        devDependencies: {
+          husky: "^3.0.9",
+          prettier: "1.19.1",
+          "prettier-plugin-apex": "^1.0.0",
+          "pretty-quick": "^2.0.1"
+        },
+        husky: {
+          hooks: {
+            "pre-commit": "pretty-quick --staged"
+          }
         }
       }
     };
-
-    this.fs.extendJSON(this.destinationPath("package.json"), pkgJson);
+    if (!newPkgJson.name) {
+      newPkgJson.name = path.basename(this.destinationPath("."));
+    }
+    this.fs.extendJSON(npmPackagePath, newPkgJson);
   }
 
   writePrettier() {
