@@ -6,21 +6,11 @@
   </types>
   <types>
     <members>*</members>
-    <name>ApexTrigger</name>
-  </types>
-  <types>
-    <members>*</members>
-    <members>Account</members>
-    <members>Contact</members>
-    <members>Lead</members>
-    <members>Opportunity</members>
-    <members>OpportunityLineItem</members>
-    <members>Case</members>
-    <name>CustomObject</name>
-  </types>
-  <types>
-    <members>*</members>
     <name>ApexPage</name>
+  </types>
+  <types>
+    <members>*</members>
+    <name>ApexTrigger</name>
   </types>
   <types>
     <members>*</members>
@@ -32,11 +22,21 @@
   </types>
   <types>
     <members>*</members>
-    <name>StaticResource</name>
+    <members>Account</members>
+    <members>Case</members>
+    <members>Contact</members>
+    <members>Lead</members>
+    <members>Opportunity</members>
+    <members>OpportunityLineItem</members>
+    <name>CustomObject</name>
   </types>
   <types>
     <members>*</members>
     <name>Flow</name>
+  </types>
+  <types>
+    <members>*</members>
+    <name>StaticResource</name>
   </types>
   <version>44.0</version>
 </Package>
