@@ -1,9 +1,11 @@
 {
   "name": "generator-ccc",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prepublish": "tsc",
+    "watch": "tsc -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -15,10 +17,14 @@
     "generators"
   ],
   "dependencies": {
-    "@types/yeoman-generator": "^3.1.4",
     "chalk": "^3.0.0",
     "deepmerge": "^4.2.2",
     "yeoman-generator": "^4.2.0",
     "yosay": "^2.0.2"
+  },
+  "devDependencies": {
+    "@types/deepmerge": "^2.2.0",
+    "@types/yeoman-generator": "^3.1.4",
+    "typescript": "^3.7.3"
   }
 }

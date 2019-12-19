@@ -1,16 +1,17 @@
-const Generator = require("yeoman-generator");
-const chalk = require("chalk");
-const yosay = require("yosay");
-const path = require("path");
-const EOL = require("os").EOL;
-const merge = require("deepmerge");
+import Generator from "yeoman-generator";
+import yosay from "yosay";
+import path from "path";
+import {EOL} from 'os';
+import merge from "deepmerge";
 
 module.exports = class extends Generator {
+  private props: {};
+
   constructor(args, opts) {
     super(args, opts);
   }
 
-  prompting() {
+  public prompting() {
     // Have Yeoman greet the user.
     this.log(yosay(`Callaway Cloud SFDX Project`));
 
@@ -22,9 +23,7 @@ module.exports = class extends Generator {
     });
   }
 
-  writing() {
-    // this.destinationRoot(path.join(".", this.options.appname));
-
+  public writing() {
     this.fs.copy(
       this.templatePath(path.join(".", "static")),
       this.destinationPath("."),
@@ -37,7 +36,7 @@ module.exports = class extends Generator {
     this.writeGitIgnore();
   }
 
-  writeNpmPackage() {
+  private writeNpmPackage() {
     // Extend or create package.json file in destination path
     const npmPackagePath = this.destinationPath("package.json");
     const oldPkgJson = this.fs.exists(npmPackagePath)
@@ -72,7 +71,7 @@ module.exports = class extends Generator {
     this.fs.write(npmPackagePath, JSON.stringify(newPkgJson, null, 2));
   }
 
-  writePrettier() {
+  private writePrettier() {
     //prettier
     const prettierSettings = {
       trailingComma: "none",
@@ -95,7 +94,7 @@ module.exports = class extends Generator {
     this.fs.extendJSON(this.destinationPath(".prettierrc"), prettierSettings);
   }
 
-  writeVscodeSettings() {
+  private writeVscodeSettings() {
     const vscodeSettingsPath = this.destinationPath(
       path.join(".vscode", "settings.json")
     );
@@ -123,7 +122,7 @@ module.exports = class extends Generator {
     this.fs.write(vscodeSettingsPath, JSON.stringify(mergedSettings, null, 2));
   }
 
-  writeGitIgnore() {
+  private writeGitIgnore() {
     const ignorePath = this.destinationPath(".gitignore");
     const ignored = this.fs.exists(ignorePath)
       ? this.fs.read(ignorePath).split(EOL)
@@ -134,7 +133,7 @@ module.exports = class extends Generator {
     this.fs.write(ignorePath, Array.from(lines).join(EOL));
   }
 
-  install() {
+  public install() {
     this.installDependencies({
       bower: false,
       npm: true
