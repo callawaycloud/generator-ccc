@@ -3,6 +3,8 @@ const chalk = require("chalk");
 const yosay = require("yosay");
 const path = require("path");
 const EOL = require("os").EOL;
+const merge = require("deepmerge");
+
 module.exports = class extends Generator {
   constructor(args, opts) {
     super(args, opts);
@@ -12,14 +14,7 @@ module.exports = class extends Generator {
     // Have Yeoman greet the user.
     this.log(yosay(`Callaway Cloud SFDX Project`));
 
-    const prompts = [
-      // {
-      //   type: "confirm",
-      //   name: "preCommitPrettier",
-      //   message: "Run Prettier on pre-commit",
-      //   default: true
-      // }
-    ];
+    const prompts = [];
 
     return this.prompt(prompts).then(props => {
       // To access props later use this.props.someAnswer;
@@ -44,7 +39,16 @@ module.exports = class extends Generator {
 
   writeNpmPackage() {
     // Extend or create package.json file in destination path
-    const pkgJson = {
+    const npmPackagePath = this.destinationPath("package.json");
+    const oldPkgJson = this.fs.exists(npmPackagePath)
+      ? this.fs.readJSON(npmPackagePath)
+      : {};
+
+    // if there are key conflicts the rightmost (pkgJson) wins
+    let defaultJson = {
+      name: oldPkgJson.name
+        ? oldPkgJson.name
+        : path.basename(this.destinationPath(".")),
       scripts: {
         "pretty-all-apex": "npx prettier --write 'src/**/*.{trigger,cls}'",
         clean: "sfdx force:source:clean",
@@ -64,7 +68,8 @@ module.exports = class extends Generator {
       }
     };
 
-    this.fs.extendJSON(this.destinationPath("package.json"), pkgJson);
+    const newPkgJson = merge(oldPkgJson, defaultJson);
+    this.fs.write(npmPackagePath, JSON.stringify(newPkgJson, null, 2));
   }
 
   writePrettier() {
@@ -91,31 +96,42 @@ module.exports = class extends Generator {
   }
 
   writeVscodeSettings() {
+    const vscodeSettingsPath = this.destinationPath(
+      path.join(".vscode", "settings.json")
+    );
+    const oldSettings = this.fs.exists(vscodeSettingsPath)
+      ? this.fs.readJSON(vscodeSettingsPath)
+      : {};
+
     //prettier
-    const settings = {
+    const defaultSettings = {
       "salesforcedx-vscode-core.show-cli-success-msg": false,
+      "salesforcedx-vscode-core.push-or-deploy-on-save.enabled": true,
+      "editor.formatOnSave": true,
+      "editor.formatOnSaveTimeout": 5000,
       "search.exclude": {
         "**/node_modules": true,
-        "**/dist": true
-      },
-      "salesforcedx-vscode-core.push-or-deploy-on-save.enabled": true
+        "**/dist": true,
+        "**/*.meta.xml": true
+      }
     };
 
+    //deep merge... don't override user settings
+    const mergedSettings = merge(defaultSettings, oldSettings);
+
     // Extend or create package.json file in destination path
-    this.fs.extendJSON(
-      this.destinationPath(path.join(".vscode", "settings.json")),
-      settings
-    );
+    this.fs.write(vscodeSettingsPath, JSON.stringify(mergedSettings, null, 2));
   }
 
   writeGitIgnore() {
     const ignorePath = this.destinationPath(".gitignore");
-    const ignorePaths = ["dist", "node_modules"];
-    try {
-      const gitIgnore = this.fs.read();
-      const lines = new Set([...gitIgnore.split(EOL), ...ignorePaths]);
-      this.fs.write(ignorePath, lines.join(EOL));
-    } catch (e) {}
+    const ignored = this.fs.exists(ignorePath)
+      ? this.fs.read(ignorePath).split(EOL)
+      : [];
+
+    const defaultIgnores = ["dist/", "node_modules/"];
+    const lines = new Set([...ignored, ...defaultIgnores]);
+    this.fs.write(ignorePath, Array.from(lines).join(EOL));
   }
 
   install() {
