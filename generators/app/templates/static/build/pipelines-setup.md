@@ -23,7 +23,21 @@ _NOTE:_ This setup currently only works with the "Org Development Model" (manife
 
 For this CI process to work you just need to follow a one simple rule:
 
-> Master is Production
+## 💻 Development Workflow
+
+For this CI process to work you just need to follow a one simple rule:
+
+**Master == Production**
+
+Nothing should ever be commited or merged into master unless it has already successfully been deployed.  The CI process itself will ensure that this happens.
+
+A typical flow would look like this:
+
+1. Developer creates feature branch off master
+1. does work
+1. creates PR back into master.  The CI will automaticly sync production & build the deployment package.   This lets us know that there are no merge conflicts as soons as possible.
+1. Once the package build successfully the developer can go ahead manually kick off the "Check Package" step.  This confirms that the PR is deployable and all tests pass
+1. Once the PR has been approved and you are ready to deploy, you can run "Quick Deploy".  If the previously checked deployment has been invalidated, you can either rerun the check package step, or manually kick off one of the full pipeline variants.
 
 Nothing should ever be committed or merged into master unless it has already successfully been deployed.  The CI process itself will ensure that this happens.
 
