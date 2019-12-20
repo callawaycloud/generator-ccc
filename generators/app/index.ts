@@ -3,6 +3,8 @@ import yosay from "yosay";
 import path from "path";
 import {EOL} from 'os';
 import merge from "deepmerge";
+import updateNotifier from 'update-notifier';
+import pkg from '../../package.json';
 
 module.exports = class extends Generator {
   private props: {};
@@ -14,6 +16,9 @@ module.exports = class extends Generator {
   public prompting() {
     // Have Yeoman greet the user.
     this.log(yosay(`Callaway Cloud SFDX Project`));
+
+    const notifier = updateNotifier({pkg});
+    notifier.notify();
 
     const prompts = [];
 
