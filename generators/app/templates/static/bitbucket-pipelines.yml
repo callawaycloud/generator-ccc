@@ -10,6 +10,7 @@ pipelines:
       - step:
           name: "Build Package"
           script:
+            - if [ "${BITBUCKET_PR_DESTINATION_BRANCH}" != "master" ]; then printf 'Destination is not master... Skipping pipeline'; exit; fi
             - ./build/setup.sh
             - ./build/sync.sh
             - ./build/package.sh
