@@ -43,20 +43,23 @@ pipelines:
             - ./build/setup.sh
             - ./build/sync.sh
     Deploy to Production:
+      - variables:
+        - name: Enter1ToSkipProdSync
       - step:
           script:
             - ./build/setup.sh
-            - ./build/sync.sh
+            - ./build/sync.sh $Enter1ToSkipProdSync
             - ./build/package.sh
             - sfdx force:mdapi:deploy -d dist/$BITBUCKET_BRANCH -w 5000 --verbose
             - ./build/merge.sh
     Deploy to Production (Selective Tests):
-      - variables: #list variable names under here
-          - name: Tests
+      - variables:
+        - name: Enter1ToSkipProdSync
+        - name: Tests
       - step:
           script:
             - ./build/setup.sh
-            - ./build/sync.sh
+            - ./build/sync.sh $Enter1ToSkipProdSync
             - ./build/package.sh
             - sfdx force:mdapi:deploy -d dist/$BITBUCKET_BRANCH -w 5000 -l RunSpecifiedTests -r $Tests --verbose
             - ./build/merge.sh

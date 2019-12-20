@@ -73,7 +73,7 @@ module.exports = class extends Generator {
     };
 
     const newPkgJson = merge(oldPkgJson, defaultJson);
-    this.fs.write(npmPackagePath, JSON.stringify(newPkgJson, null, 2));
+    this.fs.write(npmPackagePath, JSON.stringify(newPkgJson, null, 4));
   }
 
   private writePrettier() {
@@ -124,7 +124,7 @@ module.exports = class extends Generator {
     const mergedSettings = merge(defaultSettings, oldSettings);
 
     // Extend or create package.json file in destination path
-    this.fs.write(vscodeSettingsPath, JSON.stringify(mergedSettings, null, 2));
+    this.fs.write(vscodeSettingsPath, JSON.stringify(mergedSettings, null, 4));
   }
 
   private writeGitIgnore() {
