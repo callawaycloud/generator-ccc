@@ -53,7 +53,8 @@ module.exports = class extends Generator {
     const defaultPath = this.templatePath(path.join(".", "dynamic", "package.xml"));
     let defaultPkg = await readPackage(this.fs.read(defaultPath))
 
-    const newPkg = writePackage(merge(defaultPkg, oldPkgManifest));
+    let newPkgXml = oldPkgManifest ? merge(defaultPkg, oldPkgManifest) : defaultPkg;
+    const newPkg = writePackage(newPkgXml);
     this.fs.write(manifestPath, newPkg);
   }
 
@@ -76,10 +77,10 @@ module.exports = class extends Generator {
           "sfdx git:package -d dist/$(git symbolic-ref --short HEAD)"
       },
       devDependencies: {
-        husky: "^3.0.9",
-        prettier: "1.19.1",
-        "prettier-plugin-apex": "^1.0.0",
-        "pretty-quick": "^2.0.1"
+        husky: "^3.x",
+        prettier: "1.x",
+        "prettier-plugin-apex": "^1.x",
+        "pretty-quick": "^2.x"
       },
       husky: {
         hooks: {
@@ -101,12 +102,28 @@ module.exports = class extends Generator {
       apexInsertFinalNewline: false,
       overrides: [
         {
-          files: "*.{cmp,page,component}",
-          options: { parser: "html" }
+          "files": "*.{cmp,page,component}",
+          "options": {
+            "parser": "html"
+          }
         },
         {
-          files: "*.yml",
-          options: { tabWidth: 2 }
+          "files": "*.yml",
+          "options": {
+            "tabWidth": 2
+          }
+        },
+        {
+          "files": "**/lwc/**/*.html",
+          "options": {
+            "parser": "lwc"
+          }
+        },
+        {
+          "files": "*.{cmp,page,component}",
+          "options": {
+            "parser": "html"
+          }
         }
       ]
     };
@@ -145,13 +162,18 @@ module.exports = class extends Generator {
 
   private writeGitIgnore() {
     const ignorePath = this.destinationPath(".gitignore");
-    const ignored = this.fs.exists(ignorePath)
-      ? this.fs.read(ignorePath).split(EOL)
-      : [];
+    const currentIgnore = this.fs.exists(ignorePath)
+      ? this.fs.read(ignorePath) : '';
 
+    const currentIgnoreLines = currentIgnore.split(EOL);
     const defaultIgnores = ["dist/", "node_modules/"];
-    const lines = new Set([...ignored, ...defaultIgnores]);
-    this.fs.write(ignorePath, Array.from(lines).join(EOL));
+    const missing = [];
+    for(const defaultIgnore of defaultIgnores){
+      if(!currentIgnoreLines.includes(defaultIgnore)){
+        missing.push(defaultIgnore);
+      }
+    }
+    this.fs.write(ignorePath, currentIgnore + EOL + missing.join(EOL));
   }
 
   public install() {
