@@ -9,7 +9,7 @@ if [ -z "$PRODUCTION_SYNC_INTERVAL" ]
 then
   PRODUCTION_SYNC_INTERVAL=3
 fi
-echo $PRODUCTION_SYNC_INTERVAL
+echo "The PRODUCTION_SYNC_INTERVAL is $PRODUCTION_SYNC_INTERVAL"
 if [ "$numDays" -lt "$PRODUCTION_SYNC_INTERVAL" ]
 then
   echo "Sync is current. Exiting now."
@@ -20,4 +20,3 @@ else
   echo "=== Sync Complete ==="
   echo "*** Next Sync Schedule in $PRODUCTION_SYNC_INTERVAL days."
 fi
-   
