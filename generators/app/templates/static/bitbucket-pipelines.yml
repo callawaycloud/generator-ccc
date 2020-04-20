@@ -63,3 +63,7 @@ pipelines:
             - ./build/package.sh
             - sfdx force:mdapi:deploy -d dist/$BITBUCKET_BRANCH -w 5000 -l RunSpecifiedTests -r $Tests --verbose
             - ./build/merge.sh
+    Scheduled Production Sync:
+      - step:
+          script:
+            - ./build/schedule.sh
