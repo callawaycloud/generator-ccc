@@ -19,6 +19,6 @@ else
   ./setup.sh
   ./sync.sh
   echo "=== Sync Complete ==="
-  echo "*** Next Sync Schedule in $PRODUCTION_SYNC_INTERVAL days."
+  echo "*** Next Sync Scheduled in $PRODUCTION_SYNC_INTERVAL days."
 fi
 set +x;
