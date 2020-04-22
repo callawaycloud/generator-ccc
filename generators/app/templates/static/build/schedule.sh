@@ -16,8 +16,8 @@ then
   echo "*** Next Sync Schedule in $((PRODUCTION_SYNC_INTERVAL-numDays)) days."
 else
   echo "=== Sync about to begin... ==="
-  ./setup.sh
-  ./sync.sh
+  ./build/setup.sh
+  ./build/sync.sh
   echo "=== Sync Complete ==="
   echo "*** Next Sync Scheduled in $PRODUCTION_SYNC_INTERVAL days."
 fi
