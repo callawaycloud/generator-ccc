@@ -120,3 +120,22 @@ No additional steps are required to close the pull request, although you might w
 ❗️ **Deployment Failed**
 
 Most likely the [previously checked deployment is no longer valid](https://salesforce.stackexchange.com/questions/187859/what-operations-would-cause-a-validated-changeset-to-become-invalidated-and-lose).
+
+## Scheduled Production Sync
+
+#### Use
+This pipeline enables production to sync automatically on a given interval(days) from the last production sync.
+
+#### Schedule Configuration
+
+1. (Optional)Navigate to the bitbucket repository for desired project.
+  - `Repository Settings` => `Repository Variables`
+  - Enter variable `PRODUCTION_SYNC_INTERVAL`
+  - Set `PRODUCTION_SYNC_INTERVAL` to desired interval(days)
+  - If `PRODUCTION_SYNC_INTERVAL` is not set, it will be automatically assigned to an interval of 3 days.
+2. Navigate to `Piplines` => `Schedules` in the repository.
+  - click `New Schedule`
+  - choose `master` branch
+  - choose `Scheduled Production Sync`
+  - recommended interval is `daily`
+3. Click `Create` and your finished

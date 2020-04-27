@@ -26,22 +26,3 @@ Yeoman generator used to setup & upgrade Callaway Salesforce development project
 4. `npm run watch`
 5. make changes
 6. open test project.  Run `yo ccc`
-
-## Scheduled Production Sync
-
-#### Use
-This pipeline enables production to sync automatically on a given interval(days) from the last production sync. 
-
-#### Schedule Configuration
-
-1. (Optional)Navigate to the bitbucket repository for desired project.
-  - `Repository Settings` => `Repository Variables`
-  - Enter variable `PRODUCTION_SYNC_INTERVAL`
-  - Set `PRODUCTION_SYNC_INTERVAL` to desired interval(days)
-  - If `PRODUCTION_SYNC_INTERVAL` is not set, it will be automatically assigned to an interval of 3 days.
-2. Navigate to `Piplines` => `Schedules` in the repository.
-  - click `New Schedule`
-  - choose `master` branch
-  - choose `Scheduled Production Sync`
-  - recommended interval is `daily`
-3. Click `Create` and your finished
