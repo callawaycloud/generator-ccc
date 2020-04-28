@@ -63,11 +63,11 @@ Alternately, you could copy the [build folder](https://github.com/ChuckJonas/gen
 
 ### Scheduled Production Sync
 
-#### Use
-This pipeline enables production to sync automatically on a given interval(days) from the last production sync.
+Ideally we want master to always be as close to production as possible.  With the CI, every time we deploy, they get synced up.  However, if you don't deploy for several days/weeks/months, they will likely get out of sync.  We want to not only capture the changes, but also know when the changes happened.  
 
-#### Schedule Configuration
+To solve this, we've added a "Scheduled Pipeline" which checks for the last production sync.  If it was `> X days`, we will go ahead and run the sync.
 
+To setup Scheduled Sync:
 
   1. Navigate to `Pipelines` => `Schedules` in the repository.
   1. click `New Schedule`
