@@ -61,6 +61,25 @@ Alternately, you could copy the [build folder](https://github.com/ChuckJonas/gen
 1. Navigate to "Settings -> Pipelines -> Repository variables"
 1. Create a new variable called AUTH_URL. **MAKE SURE TO CHECK THE SECURE OPTION!!!**
 
+### Scheduled Production Sync
+
+#### Use
+This pipeline enables production to sync automatically on a given interval(days) from the last production sync.
+
+#### Schedule Configuration
+
+1. (Optional)Navigate to the bitbucket repository for desired project.
+  - `Repository Settings` => `Repository Variables`
+  - Enter variable `PRODUCTION_SYNC_INTERVAL`
+  - Set `PRODUCTION_SYNC_INTERVAL` to desired interval(days)
+  - If `PRODUCTION_SYNC_INTERVAL` is not set, it will be automatically assigned to an interval of 3 days.
+2. Navigate to `Piplines` => `Schedules` in the repository.
+  - click `New Schedule`
+  - choose `master` branch
+  - choose `Scheduled Production Sync`
+  - recommended interval is `daily`
+3. Click `Create` and your finished
+
 ## 🌊 Pipeline Steps
 
 <img width="300" alt="callawaycloud___ci-example-repo___Pipelines_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/70215690-4b0d8100-16fb-11ea-95d5-b7f5b0afc2f5.png">
