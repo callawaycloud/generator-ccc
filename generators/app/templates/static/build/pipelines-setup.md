@@ -67,15 +67,15 @@ Ideally we want master to always be as close to production as possible.  With th
 
 To solve this, we've added a "Scheduled Pipeline" which checks for the last production sync.  If it was `> X days`, we will go ahead and run the sync.
 
-To setup Scheduled Sync:
+**To setup Scheduled Sync:**
 
-  1. Navigate to `Pipelines` => `Schedules` in the repository.
-  1. click `New Schedule`
+  1. Navigate to "Pipelines => Schedules" in the repository.
+  1. click "New Schedule"
   1. choose `master` branch
-  1. choose `Scheduled Production Sync`
+  1. choose "Scheduled Production Sync"
   1. recommended interval is `daily`
   1. select a time for it to run (recommended 3am)
-  1. click `Create` 
+  1. click "Create" 
 
 <img width="1395" alt="callawaycloud___realself___Pipelines_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/80502612-1a3e1a80-892e-11ea-9d08-0996cb5bfae8.png">
 
