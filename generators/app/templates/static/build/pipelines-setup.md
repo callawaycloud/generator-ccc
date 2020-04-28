@@ -68,17 +68,22 @@ This pipeline enables production to sync automatically on a given interval(days)
 
 #### Schedule Configuration
 
-1. (Optional)Navigate to the bitbucket repository for desired project.
-  - `Repository Settings` => `Repository Variables`
-  - Enter variable `PRODUCTION_SYNC_INTERVAL`
-  - Set `PRODUCTION_SYNC_INTERVAL` to desired interval(days)
-  - If `PRODUCTION_SYNC_INTERVAL` is not set, it will be automatically assigned to an interval of 3 days.
-2. Navigate to `Piplines` => `Schedules` in the repository.
-  - click `New Schedule`
-  - choose `master` branch
-  - choose `Scheduled Production Sync`
-  - recommended interval is `daily`
-3. Click `Create` and your finished
+
+  1. Navigate to `Pipelines` => `Schedules` in the repository.
+  1. click `New Schedule`
+  1. choose `master` branch
+  1. choose `Scheduled Production Sync`
+  1. recommended interval is `daily`
+  1. select a time for it to run (recommended 3am)
+  1. click `Create` 
+
+<img width="1395" alt="callawaycloud___realself___Pipelines_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/80502612-1a3e1a80-892e-11ea-9d08-0996cb5bfae8.png">
+
+
+By default the "sync internal" is set to 3 days.  If you want to configure this time to be longer/shorter:
+
+  1. Navigate to `Repository Settings` => `Repository Variables`
+  1. add new variable called `PRODUCTION_SYNC_INTERVAL` with to desired interval (in days)
 
 ## 🌊 Pipeline Steps
 
