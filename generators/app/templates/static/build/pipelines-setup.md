@@ -16,7 +16,7 @@ _NOTE:_ This setup currently only works with the "Org Development Model" (manife
    - Data configuration
 3. Only deploy metadata that has changed.
 4. Make it impossible to overwrite changes that have been introduced outside of our source control (dang :wombats:)
-5. Keep `master` in sync with production
+5. Keep `master` in sync with production.  This includes capturing changes to installed "package" versions (via `sfdc-package.json`) 
 6. Do all of this without overloading the deployment queue
 
 ## 💻 Development Workflow
