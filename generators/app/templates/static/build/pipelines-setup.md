@@ -16,7 +16,7 @@ _NOTE:_ This setup currently only works with the "Org Development Model" (manife
    - Data configuration
 3. Only deploy metadata that has changed.
 4. Make it impossible to overwrite changes that have been introduced outside of our source control (dang :wombats:)
-5. Keep `master` in sync with production.  This includes capturing changes to installed "package" versions (via `sfdc-package.json`) 
+5. Keep `master` in sync with production. This includes capturing changes to installed "package" versions (via `sfdc-package.json`)
 6. Do all of this without overloading the deployment queue
 
 ## 💻 Development Workflow
@@ -25,15 +25,15 @@ For this CI process to work you just need to follow a one simple rule:
 
 **Master == Production**
 
-Nothing should ever be committed or merged into master unless it has already successfully been deployed.  The CI process itself will ensure that this happens.
+Nothing should ever be committed or merged into master unless it has already successfully been deployed. The CI process itself will ensure that this happens.
 
 A typical development flow would look like this:
 
 1. Developer creates feature branch off master
 1. Developer builds & commits changes
-1. creates PR back into master.  The CI will automatically sync production & build the deployment package.   This lets us know that there are no merge conflicts as soon as possible.
-1. Once the package build successfully the developer can go ahead manually kick off the "Check Package" step.  This confirms that the PR is deployable and all tests pass
-1. Once the PR has been approved and you are ready to deploy, you can run "Quick Deploy".  If the previously checked deployment has been invalidated, you can either rerun the check package step, or manually kick off one of the full pipeline variants.
+1. creates PR back into master. The CI will automatically sync production & build the deployment package. This lets us know that there are no merge conflicts as soon as possible.
+1. Once the package build successfully the developer can go ahead manually kick off the "Check Package" step. This confirms that the PR is deployable and all tests pass
+1. Once the PR has been approved and you are ready to deploy, you can run "Quick Deploy". If the previously checked deployment has been invalidated, you can either rerun the check package step, or manually kick off one of the full pipeline variants.
 1. Once the pipeline completes your done! The branch will automatically be merged and cleaned up.
 
 ## 🔧 Setup
@@ -47,9 +47,12 @@ The easiest way to add this pipeline to a project is to use the [callaway yeoman
 3. `cd` to project
 4. run `yo ccc`
 
-**NOTE:** When running from windows, the `build/*.sh` files do not seem to retain their executable permission. You'll need to figure out a way to [make the files linux executable](https://unix.stackexchange.com/questions/256964/transferring-executable-files-from-windows-to-linux-via-winscp) for the pipeline ci to run.
+**NOTE:** When running from Windows, the `build/*.sh` files do not seem to retain their executable permission. You'll need to figure out a way to [make the files linux executable](https://unix.stackexchange.com/questions/256964/transferring-executable-files-from-windows-to-linux-via-winscp) for the pipeline ci to run.
 
-Alternately, you could copy the [build folder](https://github.com/ChuckJonas/generator-ccc/tree/master/generators/app/templates/static/build) & [bitbucket-pipelines.yml](https://github.com/ChuckJonas/generator-ccc/blob/master/generators/app/templates/static/bitbucket-pipelines.yml) to your project.
+The recommended method is to manually grant the files in the [build folder](https://github.com/ChuckJonas/generator-ccc/tree/master/generators/app/templates/static/build) & [bitbucket-pipelines.yml](https://github.com/ChuckJonas/generator-ccc/blob/master/generators/app/templates/static/bitbucket-pipelines.yml) permission to execute.
+
+**Only needed if running from windows** Run the following git command:
+`git update-index --chmod=+x (get-item .\build\*.sh).FullName`
 
 ### Environment Setup
 
@@ -63,27 +66,26 @@ Alternately, you could copy the [build folder](https://github.com/ChuckJonas/gen
 
 ### Scheduled Production Sync
 
-Ideally we want master to always be as close to production as possible.  With the CI, every time we deploy, they get synced up.  However, if you don't deploy for several days/weeks/months, they will likely get out of sync.  We want to not only capture the changes, but also know when the changes happened.  
+Ideally we want master to always be as close to production as possible. With the CI, every time we deploy, they get synced up. However, if you don't deploy for several days/weeks/months, they will likely get out of sync. We want to not only capture the changes, but also know when the changes happened.
 
-To solve this, we've added a "Scheduled Pipeline" which checks for the last production sync.  If it was `> X days`, we will go ahead and run the sync.
+To solve this, we've added a "Scheduled Pipeline" which checks for the last production sync. If it was `> X days`, we will go ahead and run the sync.
 
 **To setup Scheduled Sync:**
 
-  1. Navigate to "Pipelines => Schedules" in the repository.
-  1. click "New Schedule"
-  1. choose `master` branch
-  1. choose "Scheduled Production Sync"
-  1. recommended interval is `daily`
-  1. select a time for it to run (recommended 3am)
-  1. click "Create" 
+1. Navigate to "Pipelines => Schedules" in the repository.
+1. click "New Schedule"
+1. choose `master` branch
+1. choose "Scheduled Production Sync"
+1. recommended interval is `daily`
+1. select a time for it to run (recommended 3am)
+1. click "Create"
 
 <img width="1395" alt="callawaycloud___realself___Pipelines_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/80502612-1a3e1a80-892e-11ea-9d08-0996cb5bfae8.png">
 
+By default the "sync internal" is set to 3 days. If you want to configure this time to be longer/shorter:
 
-By default the "sync internal" is set to 3 days.  If you want to configure this time to be longer/shorter:
-
-  1. Navigate to `Repository Settings` => `Repository Variables`
-  1. add new variable called `PRODUCTION_SYNC_INTERVAL` with to desired interval (in days)
+1. Navigate to `Repository Settings` => `Repository Variables`
+1. add new variable called `PRODUCTION_SYNC_INTERVAL` with to desired interval (in days)
 
 ## 🌊 Pipeline Steps
 
