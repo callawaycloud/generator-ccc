@@ -1,4 +1,4 @@
-image: salesforce/salesforcedx:7.33.2-full
+image: salesforce/salesforcedx:7.63.0-full
 
 clone:
   depth: full
@@ -10,9 +10,13 @@ pipelines:
       - step:
           name: "Build Package"
           script:
+            - if git log -1 | grep -q "\\[skip ci\\]"; then printf 'CI Commit... Skipping pipeline!'; exit; fi
             - if [ "${BITBUCKET_PR_DESTINATION_BRANCH}" != "master" ]; then printf 'Destination is not master... Skipping pipeline'; exit; fi
             - ./build/setup.sh
-            - ./build/sync.sh
+            - pr_description=$(curl -s https://${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/pullrequests/${BITBUCKET_PR_ID} | jq -r '.description')
+            - SKIP_SYNC=$(echo "$pr_description" | grep -i -c \!skipsync)
+            - echo Skip Sync $SKIP_SYNC
+            - ./build/sync.sh $SKIP_SYNC
             - ./build/package.sh
           artifacts:
             - dist/**
@@ -21,7 +25,10 @@ pipelines:
           trigger: manual
           script:
             - ./build/setup.sh
-            - DEPLOY_ID=$(sfdx force:mdapi:deploy -d dist/$BITBUCKET_BRANCH -c --json | jq -r .result.id)
+            - pr_description=$(curl -s https://${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/pullrequests/${BITBUCKET_PR_ID} | jq -r '.description')
+            - TESTS=$(echo "$pr_description" | grep -i \!tests= | cut -d "=" -f 2-)
+            - echo Tests $TESTS
+            - DEPLOY_ID=$(sfdx force:mdapi:deploy ${TESTS:+ -l RunSpecifiedTests -r "${TESTS}"} -d dist/$BITBUCKET_BRANCH -c --json | jq -r .result.id)
             - echo $DEPLOY_ID
             - echo $DEPLOY_ID > dist/deploy_id.txt
             - sfdx force:mdapi:deploy:report --jobid $DEPLOY_ID -w 1000
@@ -44,7 +51,7 @@ pipelines:
             - ./build/sync.sh
     Deploy to Production:
       - variables:
-        - name: Enter1ToSkipProdSync
+          - name: Enter1ToSkipProdSync
       - step:
           script:
             - ./build/setup.sh
@@ -54,8 +61,8 @@ pipelines:
             - ./build/merge.sh
     Deploy to Production (Selective Tests):
       - variables:
-        - name: Enter1ToSkipProdSync
-        - name: Tests
+          - name: Enter1ToSkipProdSync
+          - name: Tests
       - step:
           script:
             - ./build/setup.sh
