@@ -146,3 +146,25 @@ No additional steps are required to close the pull request, although you might w
 ❗️ **Deployment Failed**
 
 Most likely the [previously checked deployment is no longer valid](https://salesforce.stackexchange.com/questions/187859/what-operations-would-cause-a-validated-changeset-to-become-invalidated-and-lose).
+
+## Advanced Control
+
+### Pull-Request Pipeline Options
+
+Unfortunately, at the moment it is not possible to pass user variables to a Pull Request Pipeline.
+
+As a work around, we have added the ability to define pipeline variables as text in the PR "description". These "variables start with a `!`, may be place anywhere in the description and are cases insensitive.
+
+**Skip Production Sync**
+
+`!skipSync`
+
+**Run Only Selected Tests**
+
+`!tests=FooTests,BarTests`
+
+### Manual Pipelines
+
+Beyond the pipeline that runs on PR, there are also pipelines that can be run manually:
+
+<img width="539" alt="callawaycloud___realself___Branches_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/88209549-19a4df80-cc10-11ea-842e-8012a7c6be45.png">
