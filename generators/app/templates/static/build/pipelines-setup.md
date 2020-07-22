@@ -151,6 +151,8 @@ Most likely the [previously checked deployment is no longer valid](https://sales
 
 ### Pull-Request Pipeline Options
 
+<img width="959" alt="callawaycloud___realself___Pull_Request__219__Testing_Pipeline_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/88209825-7ef8d080-cc10-11ea-9f1b-da053358dde9.png">
+
 Unfortunately, at the moment it is not possible to pass user variables to a Pull Request Pipeline.
 
 As a work around, we have added the ability to define pipeline variables as text in the PR "description". These "variables start with a `!`, may be place anywhere in the description and are cases insensitive.
