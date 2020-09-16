@@ -13,6 +13,14 @@ There seems to be a bug, where reguardless of the API version specified in `sfdx
 
 Update the `sourceApiVersion` in `sfdx-project.json` to the latest version of the API available in production.  If the sandbox is pre-release, it might be possible that you cannot deploy to metadata retrieved from there.
 
+## Entity type 'LightningComponentBundle' is not available in this api version
+
+[Reference](https://salesforce.stackexchange.com/questions/250745/lightningcomponentbundle-not-available-for-deploy-for-this-api-version-error/250746#250746)
+
+### Resolution
+
+Update the `sourceApiVersion` in `sfdx-project.json` to the latest version of the API available in production.
+
 ## Cannot set sharingModel to ControlledByParent on a CustomObject without a MasterDetail relationship field
 
 This happens when you attempt to deploy a change to an Object that is the child in a master-detail relationship and no changes were made to the M-D relationship.
