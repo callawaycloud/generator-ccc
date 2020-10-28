@@ -103,36 +103,11 @@ After completing, you can inspect the package by downloading the "artifacts".
 
 <img width="800" alt="callawaycloud___ci-example-repo___Pipelines_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/70214463-b6a21f00-16f8-11ea-9530-87dff421d7b5.png">
 
-❗️ Merge conflict
-
-If you encounter merge conflicts, that means that a file you've changed in your current branch has also been updated in production by some rogue :wombat:.
-
-Checkout master and locally merge the conflicts. Push and the PR pipeline will automatically run again.
-
-❗️ Package generation failed
-
-[Possible a bug?](https://github.com/ChuckJonas/sfdx-git-packager/issues)
-
 ### 2: "Check Package"
 
 **Trigger:** Manual
 
-This step preforms a `--CHECKONLY` deployment with the generated package.
-
-❗️ **Missing Metadata Dependencies**
-
-- If it's something we track in source control, pull it down/commit/push and try again.
-- Otherwise, you will need to manually deploy it via a changeset (or other means).
-
-❗️ **Failed Tests**
-
-Ideally you should fix the tests, commit changes, and try again. However, if the test failures are not related to your feature, you can manually run the pipeline with selective tests:
-
-<img width="550" alt="callawaycloud___ci-example-repo___Branches_—_Bitbucket" src="https://user-images.githubusercontent.com/5217568/70218930-2ddbb100-1701-11ea-8290-491db3afd2e3.png">
-
-❗️ **Contains destructive changes which cannot be deployed atomicity**
-
-This may require you to run multiple manual deployments.
+Performs a `--CHECKONLY` deployment with the generated package.
 
 ### 3: "Quick Deploy"
 
@@ -143,9 +118,7 @@ This may require you to run multiple manual deployments.
 
 No additional steps are required to close the pull request, although you might want to delete the remote branch.
 
-❗️ **Deployment Failed**
-
-Most likely the [previously checked deployment is no longer valid](https://salesforce.stackexchange.com/questions/187859/what-operations-would-cause-a-validated-changeset-to-become-invalidated-and-lose).
+![CI Resolution Diagram](https://user-images.githubusercontent.com/5217568/93302663-9939cf80-f7b7-11ea-8eb7-2de33dfaec28.png)
 
 ## Advanced Control
 
