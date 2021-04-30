@@ -78,13 +78,13 @@ module.exports = class extends Generator {
       },
       devDependencies: {
         husky: "^3.x",
-        prettier: "1.x",
-        "prettier-plugin-apex": "^1.x",
+        prettier: "^2.x",
+        "prettier-plugin-apex": "1.8.0",
         "pretty-quick": "^2.x"
       },
       husky: {
         hooks: {
-          "pre-commit": "pretty-quick --staged"
+          "pre-commit": "./build/format-commit.sh"
         }
       }
     };
