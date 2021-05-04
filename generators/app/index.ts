@@ -71,6 +71,7 @@ module.exports = class extends Generator {
         ? oldPkgJson.name
         : path.basename(this.destinationPath(".")),
       scripts: {
+        "pretty-quick": "pretty-quick --staged",
         "pretty-all-apex": "npx prettier --write 'src/**/*.{trigger,cls}'",
         clean: "sfdx force:source:clean",
         "pkg-branch":
@@ -78,13 +79,13 @@ module.exports = class extends Generator {
       },
       devDependencies: {
         husky: "^3.x",
-        prettier: "1.x",
-        "prettier-plugin-apex": "^1.x",
+        prettier: "^2.x",
+        "prettier-plugin-apex": "1.8.0",
         "pretty-quick": "^2.x"
       },
       husky: {
         hooks: {
-          "pre-commit": "pretty-quick --staged"
+          "pre-commit": "./build/format-commit.sh"
         }
       }
     };
