@@ -145,6 +145,7 @@ module.exports = class extends Generator {
     const defaultSettings = {
       "salesforcedx-vscode-core.show-cli-success-msg": false,
       "salesforcedx-vscode-core.push-or-deploy-on-save.enabled": true,
+      "salesforcedx-vscode-core.detectConflictsAtSync": true,
       "editor.formatOnSave": true,
       "editor.formatOnSaveTimeout": 5000,
       "search.exclude": {
