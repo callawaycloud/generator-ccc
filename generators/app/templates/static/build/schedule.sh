@@ -17,6 +17,7 @@ then
 else
   echo "=== Sync about to begin... ==="
   ./build/setup.sh
+  ./build/updateApiVersion.sh
   ./build/sync.sh
   echo "=== Sync Complete ==="
   echo "*** Next Sync Scheduled in $PRODUCTION_SYNC_INTERVAL days."
