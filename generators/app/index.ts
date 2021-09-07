@@ -78,10 +78,10 @@ module.exports = class extends Generator {
           "sfdx git:package -d dist/$(git symbolic-ref --short HEAD)"
       },
       devDependencies: {
-        husky: "^3.x",
+        husky: "^7.x",
         prettier: "^2.x",
-        "prettier-plugin-apex": "1.8.0",
-        "pretty-quick": "^2.x"
+        "prettier-plugin-apex": "^1.x",
+        "pretty-quick": "^3.x"
       },
       husky: {
         hooks: {
@@ -157,6 +157,9 @@ module.exports = class extends Generator {
 
     //deep merge... don't override user settings
     const mergedSettings = merge(defaultSettings, oldSettings);
+
+    this.log(yosay(`mergedSettings`));
+    this.log(yosay(JSON.stringify(mergedSettings)));
 
     // Extend or create package.json file in destination path
     this.fs.write(vscodeSettingsPath, JSON.stringify(mergedSettings, null, 4));
