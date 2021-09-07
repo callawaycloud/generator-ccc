@@ -158,9 +158,6 @@ module.exports = class extends Generator {
     //deep merge... don't override user settings
     const mergedSettings = merge(defaultSettings, oldSettings);
 
-    this.log(yosay(`mergedSettings`));
-    this.log(yosay(JSON.stringify(mergedSettings)));
-
     // Extend or create package.json file in destination path
     this.fs.write(vscodeSettingsPath, JSON.stringify(mergedSettings, null, 4));
   }
