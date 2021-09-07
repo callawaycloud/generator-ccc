@@ -71,6 +71,7 @@ module.exports = class extends Generator {
         ? oldPkgJson.name
         : path.basename(this.destinationPath(".")),
       scripts: {
+        "postinstall" : "sfdx plugins:install force-source-clean && sfdx plugins:install sfdx-git-packager",
         "pretty-quick": "pretty-quick --staged",
         "pretty-all-apex": "npx prettier --write 'src/**/*.{trigger,cls}'",
         clean: "sfdx force:source:clean",
