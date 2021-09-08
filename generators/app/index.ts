@@ -78,10 +78,10 @@ module.exports = class extends Generator {
           "sfdx git:package -d dist/$(git symbolic-ref --short HEAD)"
       },
       devDependencies: {
-        husky: "^3.x",
+        husky: "^7.x",
         prettier: "^2.x",
-        "prettier-plugin-apex": "1.8.0",
-        "pretty-quick": "^2.x"
+        "prettier-plugin-apex": "^1.x",
+        "pretty-quick": "^3.x"
       },
       husky: {
         hooks: {
