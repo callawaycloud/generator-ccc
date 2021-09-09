@@ -31,11 +31,32 @@
   <types>
     <members>*</members>
     <members>Account</members>
+    <members>Asset</members>
     <members>Case</members>
+    <members>CaseMilestone</members>
     <members>Contact</members>
+    <members>ContentVersion</members>
+    <members>Contract</members>
+    <members>ContractLineItem</members>
+    <members>Campaign</members>
+    <members>CampaignMember</members>
+    <members>Event</members>
+    <members>Invoice</members>
+    <members>InvoiceLine</members>
     <members>Lead</members>
     <members>Opportunity</members>
+    <members>OpportunityContactRole</members>
     <members>OpportunityLineItem</members>
+    <members>Order</members>
+    <members>OrderItem</members>
+    <members>Pricebook2</members>
+    <members>PricebookEntry</members>
+    <members>Product2</members>
+    <members>ServiceContract</members>
+    <members>Task</members>
+    <members>User</members>
+    <members>WorkOrder</members>
+    <members>WorkOrderLineItem</members>
     <name>CustomObject</name>
   </types>
   <types>
