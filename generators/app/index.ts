@@ -130,8 +130,16 @@ module.exports = class extends Generator {
       ]
     };
 
+    const prettierPath = this.destinationPath(".prettierrc");
+    const existingPrettierObject = this.fs.readJSON(prettierPath, {});
+
+    const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray;
+    const newPrettierObject = merge(existingPrettierObject, prettierSettings, { arrayMerge: overwriteMerge });
+
     // Extend or create package.json file in destination path
-    this.fs.extendJSON(this.destinationPath(".prettierrc"), prettierSettings);
+    if (JSON.stringify(existingPrettierObject) !== JSON.stringify(newPrettierObject)) {
+      this.fs.writeJSON(prettierPath, newPrettierObject);
+    }
   }
 
   private writeVscodeSettings() {
@@ -176,7 +184,10 @@ module.exports = class extends Generator {
         missing.push(defaultIgnore);
       }
     }
-    this.fs.write(ignorePath, currentIgnore + EOL + missing.join(EOL));
+
+    if (missing.length > 0) {
+      this.fs.write(ignorePath, currentIgnore + EOL + missing.join(EOL));
+    }
   }
 
   public install() {
