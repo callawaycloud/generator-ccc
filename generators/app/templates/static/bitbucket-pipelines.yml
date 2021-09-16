@@ -44,7 +44,7 @@ pipelines:
             - echo $DEPLOY_ID
             - sfdx force:mdapi:deploy -q $DEPLOY_ID -w 1000
             - ./build/merge.sh
-    "rollback/":
+    "rollback/*":
       - step:
           name: "Build Package"
           script:
