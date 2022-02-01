@@ -90,6 +90,7 @@ module.exports = class extends Generator {
         prettier: "^2.x",
         "prettier-plugin-apex": "^1.x",
         "pretty-quick": "^3.x",
+        "sfdx-cli": "^7.106.3",
       },
       husky: {
         hooks: {
