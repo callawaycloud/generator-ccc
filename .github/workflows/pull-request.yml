@@ -1,0 +1,121 @@
+name: Publish Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, closed]
+    branches:
+      - main
+    paths-ignore:
+      - ".github/**"
+jobs:
+  Builds:
+    runs-on: ubuntu-latest
+    # Build for multiple node versions.
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: Build on Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci --ignore-scripts
+      - run: npm run build --if-present
+        name: Build
+
+  Check-Versions:
+    if: github.event.pull_request.merged == false && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.base_ref }}
+      - name: Get Target Version
+        run: |
+          echo ${{ github.workspace }}
+          echo ${{ github.ref }}
+          echo ${{ github.head_ref }}
+          echo ${{ github.base_ref }}
+
+          versionText=$(cat package.json | jq -r '.version') 
+          echo "TARGET_VERSION=$(echo $versionText)" >> $GITHUB_ENV
+
+          versionText=$(cat package-lock.json | jq -r '.version') 
+          echo "TARGET_LOCK_VERSION=$(echo $versionText)" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v2
+      - name: Get Source Version
+        run: |
+          versionText=$(cat package.json | jq -r '.version') 
+          echo "SOURCE_VERSION=$(echo $versionText)" >> $GITHUB_ENV
+
+          versionText=$(cat package-lock.json | jq -r '.version') 
+          echo "SOURCE_LOCK_VERSION=$(echo $versionText)" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v2
+      - name: Compare Versions
+        run: |
+          echo ${{ env.TARGET_VERSION }}
+          echo ${{ env.TARGET_LOCK_VERSION }}
+
+          echo ${{ env.SOURCE_VERSION }}
+          echo ${{ env.SOURCE_LOCK_VERSION }}
+
+          versionFunction() {
+            test "$(echo -e "$1\n$2" | sort -V | head -n 1)" != "$1";
+          }
+
+          if versionFunction ${{ env.SOURCE_VERSION }} ${{ env.TARGET_VERSION }}
+          then
+            echo "${{ env.SOURCE_VERSION }} is greater than ${{ env.TARGET_VERSION }}"
+          else
+            echo ::warning file={package.json},line={1},title={Bump Version}::{You must bump the version before publishing this package}
+            echo "VERSION_FAILURE=1" >> $GITHUB_ENV
+          fi
+
+          if versionFunction ${{ env.SOURCE_LOCK_VERSION }} ${{ env.TARGET_LOCK_VERSION }}
+          then
+            echo "${{ env.SOURCE_LOCK_VERSION }} is greater than ${{ env.TARGET_LOCK_VERSION }}"
+          else
+            echo ::warning file={package-lock.json},line={1},title={Bump Version}::{You must bump the version before publishing this package}
+            echo "VERSION_FAILURE=1" >> $GITHUB_ENV
+          fi
+
+      - name: Comment On Pull Request
+        if: ${{ env.VERSION_FAILURE  == 1}}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: ":rotating_light: Don't forget to bump the versions in package.json and package-lock.json! :rotating_light:"
+            })
+
+      - name: Fail
+        if: ${{ env.VERSION_FAILURE == 1}}
+        run: exit 1
+
+  Publish-Package:
+    needs: [Builds]
+    if: github.event.pull_request.merged == true && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - name: Publish
+        # VERY IMPORTANT NOT TO RUN SCRIPTS TO PROTECT FROM MALICIOUS PACKAGES
+        run: |
+          npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+
+          npm publish --ignore-scripts
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

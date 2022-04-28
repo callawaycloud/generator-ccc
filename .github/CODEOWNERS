@@ -1,0 +1,4 @@
+# Teams can be specified as code owners as well. Teams should
+# be identified in the format @org/team-name. Teams must haveS
+# explicit write access to the repository. 
+# * @FishyGeeksKingdom/npm-test-team ---> need to create a team for our organization
