@@ -265,7 +265,7 @@ module.exports = class extends Generator {
       : "";
 
     const currentIgnoreLines = currentIgnore.split(EOL);
-    const defaultIgnores = ["dist/", "node_modules/"];
+    const defaultIgnores = ["dist/", "node_modules/", ".sf/"];
     const missing = [];
     for (const defaultIgnore of defaultIgnores) {
       if (!currentIgnoreLines.includes(defaultIgnore)) {
@@ -296,7 +296,7 @@ module.exports = class extends Generator {
     });
   }
 
-  end() {}
+  end() { }
 };
 
 // HELPER (move to new file)
