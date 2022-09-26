@@ -7,7 +7,7 @@ on:
       - master
     paths-ignore:
       - ".github/**"
-      # - ".npmignore"
+      - ".npmignore"
 jobs:
   Builds:
     runs-on: ubuntu-latest
