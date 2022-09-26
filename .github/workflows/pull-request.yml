@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, edited, closed]
     branches:
-      - main
+      - master
     paths-ignore:
       - ".github/**"
 jobs:
