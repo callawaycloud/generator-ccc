@@ -16,9 +16,7 @@ jobs:
       matrix:
         node-version: [12.x, 14.x]
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - name: Build on Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
@@ -33,16 +31,11 @@ jobs:
     if: github.event.pull_request.merged == false && github.event.action != 'closed'
     runs-on: ubuntu-latest
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.base_ref }}
       - name: Get Target Version
         run: |
-          echo ${{ github.workspace }}
-          echo ${{ github.ref }}
-          echo ${{ github.head_ref }}
-          echo ${{ github.base_ref }}
 
           versionText=$(cat package.json | jq -r '.version') 
           echo "TARGET_VERSION=$(echo $versionText)" >> $GITHUB_ENV
