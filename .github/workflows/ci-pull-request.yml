@@ -1,0 +1,22 @@
+name: Publish Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, closed]
+    branches:
+      - master
+    paths:
+      - ".github/**"
+jobs:
+  Builds:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x]
+    steps:
+      - run: echo Nothing To Build
+
+  Check-Versions:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo Nothing To Build
