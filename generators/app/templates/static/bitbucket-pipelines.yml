@@ -1,4 +1,4 @@
-image: salesforce/salesforcedx:7.63.0-full
+image: salesforce/salesforcedx:7.170.0-full
 
 clone:
   depth: full
