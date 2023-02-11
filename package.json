@@ -20,7 +20,7 @@
     "chalk": "^3.0.0",
     "deepmerge": "^4.2.2",
     "strip-json-comments": "^2.0.1",
-    "update-notifier": "^4.0.0",
+    "update-notifier": "^6.0.2",
     "xml2js": "^0.4.23",
     "yeoman-generator": "^4.2.0",
     "yosay": "^2.0.2"
