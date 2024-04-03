@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 #confirm deploy was in fact successful
 DEPLOY_SUCCESS=$(sfdx force:mdapi:deploy:report --json | jq .result.success)
 [ $DEPLOY_SUCCESS != 'true' ] && echo "Deployment Failed" && exit 1
