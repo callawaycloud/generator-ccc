@@ -28,7 +28,7 @@ pipelines:
             - pr_description=$(curl -s https://${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/pullrequests/${BITBUCKET_PR_ID} | jq -r '.description')
             - TESTS=$(echo "$pr_description" | grep -i \!tests= | cut -d "=" -f 2-) || true
             - echo Tests $TESTS
-            - DEPLOY_ID=$(sfdx force:mdapi:deploy ${TESTS:+ -l RunSpecifiedTests -r "${TESTS}"} -d dist/$BITBUCKET_BRANCH -c --json | jq -r .result.id)
+            - DEPLOY_ID=$(sfdx force:mdapi:legacy:deploy ${TESTS:+ -l RunSpecifiedTests -r "${TESTS}"} -d dist/$BITBUCKET_BRANCH -c --json | jq -r .result.id)
             - echo $DEPLOY_ID
             - echo $DEPLOY_ID > dist/deploy_id.txt
             - sfdx force:mdapi:deploy:report --jobid $DEPLOY_ID -w 1000
@@ -41,7 +41,7 @@ pipelines:
             - ./build/setup.sh
             - DEPLOY_ID=$(cat dist/deploy_id.txt)
             - echo $DEPLOY_ID
-            - sfdx force:mdapi:deploy -q $DEPLOY_ID -w 1000
+            - sfdx force:mdapi:legacy:deploy -q $DEPLOY_ID -w 1000
             - ./build/merge.sh
   custom:
     Sync Production:
@@ -57,7 +57,7 @@ pipelines:
             - ./build/setup.sh
             - ./build/sync.sh $Enter1ToSkipProdSync
             - ./build/package.sh
-            - sfdx force:mdapi:deploy -d dist/$BITBUCKET_BRANCH -w 5000 --verbose
+            - sfdx force:mdapi:legacy:deploy -d dist/$BITBUCKET_BRANCH -w 5000 --verbose
             - ./build/merge.sh
     Deploy to Production (Selective Tests):
       - variables:
@@ -68,7 +68,7 @@ pipelines:
             - ./build/setup.sh
             - ./build/sync.sh $Enter1ToSkipProdSync
             - ./build/package.sh
-            - sfdx force:mdapi:deploy -d dist/$BITBUCKET_BRANCH -w 5000 -l RunSpecifiedTests -r $Tests --verbose
+            - sfdx force:mdapi:legacy:deploy -d dist/$BITBUCKET_BRANCH -w 5000 -l RunSpecifiedTests -r $Tests --verbose
             - ./build/merge.sh
     Scheduled Production Sync:
       - step:
