@@ -22,8 +22,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm ci --ignore-scripts
-      - run: npm run build --if-present
+      - run: npm ci
+      - run: npm run build
         name: Build
 
   Check-Versions:
@@ -106,6 +106,8 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14
+      - run: npm ci
+      - run: npm run build
       - name: Publish
         # VERY IMPORTANT NOT TO RUN SCRIPTS TO PROTECT FROM MALICIOUS PACKAGES
         run: |
