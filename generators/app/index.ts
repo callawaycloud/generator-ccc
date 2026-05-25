@@ -279,6 +279,10 @@ module.exports = class extends Generator {
   }
 
   public install() {
+    if (this.options.skipInstall) {
+      return;
+    }
+
     /**
      * Install dependent sfdx plugins
      */

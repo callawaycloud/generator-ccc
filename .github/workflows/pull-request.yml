@@ -25,6 +25,8 @@ jobs:
       - run: npm ci
       - run: npm run build
         name: Build
+      - run: npm test
+        name: Test
 
   Check-Versions:
     needs: [Builds]
