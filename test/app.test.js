@@ -65,7 +65,7 @@ describe("generator-ccc:app", function () {
         it("writes default manifest metadata types", function () {
             assert.fileContent("manifest/package.xml", /<name>ApexClass<\/name>/);
             assert.fileContent("manifest/package.xml", /<name>LightningComponentBundle<\/name>/);
-            assert.fileContent("manifest/package.xml", /<version>44\.0<\/version>/);
+            assert.fileContent("manifest/package.xml", /<version>60\.0<\/version>/);
         });
 
         it("appends default gitignore entries", function () {
