@@ -20,6 +20,8 @@ Yeoman generator used to setup & upgrade Callaway Salesforce development project
 
 ## Development
 
+Requires **Node.js 22 LTS** (see `.nvmrc`).
+
 1. `git clone ...`
 2. `npm install`
 3. `npm link`
