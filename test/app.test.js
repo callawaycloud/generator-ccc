@@ -1,16 +1,16 @@
-"use strict";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+import assert from "yeoman-assert";
+import helpers from "yeoman-test";
 
-const path = require("path");
-const fs = require("fs");
-const assert = require("yeoman-assert");
-const helpers = require("yeoman-test");
-
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const generatorPath = path.join(__dirname, "../generators/app");
 const fixturePath = path.join(__dirname, "fixtures/existing-project");
 
 /**
  * Run the generator against a copy of the existing-project fixture.
- * @returns {Promise<import("yeoman-test").RunResult>}
+ * @returns {Promise<void>}
  */
 function runGeneratorOnFixture() {
     return helpers
@@ -25,8 +25,8 @@ describe("generator-ccc:app", function () {
     this.timeout(10000);
 
     describe("fresh project", function () {
-        before(function () {
-            return helpers
+        before(async function () {
+            await helpers
                 .run(generatorPath)
                 .withOptions({ skipInstall: true });
         });
@@ -86,8 +86,8 @@ describe("generator-ccc:app", function () {
     });
 
     describe("existing project merge", function () {
-        before(function () {
-            return runGeneratorOnFixture();
+        before(async function () {
+            await runGeneratorOnFixture();
         });
 
         it("preserves existing package.json identity and custom scripts", function () {
@@ -134,8 +134,8 @@ describe("generator-ccc:app", function () {
     });
 
     describe("existing gitignore", function () {
-        it("does not duplicate gitignore entries when defaults already exist", function () {
-            return helpers
+        it("does not duplicate gitignore entries when defaults already exist", async function () {
+            await helpers
                 .run(generatorPath)
                 .inTmpDir(function (dir) {
                     fs.writeFileSync(
@@ -143,16 +143,15 @@ describe("generator-ccc:app", function () {
                         "dist/\nnode_modules/\n"
                     );
                 })
-                .withOptions({ skipInstall: true })
-                .then(function () {
-                    const contents = fs.readFileSync(".gitignore", "utf8");
-                    const distCount = contents.split("dist/").length - 1;
-                    const nodeModulesCount =
-                        contents.split("node_modules/").length - 1;
+                .withOptions({ skipInstall: true });
 
-                    assert.strictEqual(distCount, 1);
-                    assert.strictEqual(nodeModulesCount, 1);
-                });
+            const contents = fs.readFileSync(".gitignore", "utf8");
+            const distCount = contents.split("dist/").length - 1;
+            const nodeModulesCount =
+                contents.split("node_modules/").length - 1;
+
+            assert.strictEqual(distCount, 1);
+            assert.strictEqual(nodeModulesCount, 1);
         });
     });
 });

@@ -3,31 +3,17 @@ import yosay from "yosay";
 import path from "path";
 import { EOL } from "os";
 import merge from "deepmerge";
-import updateNotifier from "update-notifier";
-import pkg from "../../package.json";
 import { parseStringPromise as parseXml } from "xml2js";
 import stripJsonComments from "strip-json-comments";
 
-module.exports = class extends Generator {
-  private props: {};
-
+export default class extends Generator {
   constructor(args, opts) {
     super(args, opts);
   }
 
   public prompting() {
-    // Have Yeoman greet the user.
+  // Have Yeoman greet the user.
     this.log(yosay(`Callaway Cloud SFDX Project`));
-
-    const notifier = updateNotifier({ pkg });
-    notifier.notify();
-
-    const prompts = [];
-
-    return this.prompt(prompts).then((props) => {
-      // To access props later use this.props.someAnswer;
-      this.props = props;
-    });
   }
 
   public async writing() {
@@ -294,14 +280,11 @@ module.exports = class extends Generator {
     this.spawnCommandSync("sfdx", ["plugins:install", "sfdx-git-packager"]);
 
     // npm install
-    this.installDependencies({
-      bower: false,
-      npm: true,
-    });
+    this.spawnCommandSync("npm", ["install"]);
   }
 
   end() {}
-};
+}
 
 // HELPER (move to new file)
 

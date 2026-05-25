@@ -2,6 +2,7 @@
   "name": "generator-ccc",
   "version": "1.5.3",
   "description": "",
+  "type": "module",
   "main": "generators/app/index.js",
   "scripts": {
     "build": "tsc",
@@ -21,22 +22,27 @@
     "generators"
   ],
   "dependencies": {
-    "chalk": "^3.0.0",
-    "deepmerge": "^4.2.2",
-    "strip-json-comments": "^2.0.1",
-    "update-notifier": "^4.0.0",
-    "xml2js": "^0.4.23",
-    "yeoman-generator": "^4.2.0",
+    "deepmerge": "^4.3.1",
+    "strip-json-comments": "^3.1.1",
+    "xml2js": "^0.6.2",
+    "yeoman-generator": "^7.5.1",
     "yosay": "^2.0.2"
   },
   "devDependencies": {
     "@types/deepmerge": "^2.2.0",
     "@types/mocha": "^10.0.10",
-    "@types/xml2js": "^0.4.5",
-    "@types/yeoman-generator": "^3.1.4",
+    "@types/xml2js": "^0.4.14",
+    "@yeoman/adapter": "^4.0.1",
+    "@yeoman/types": "^1.5.0",
+    "mem-fs": "^4.1.0",
     "mocha": "^11.7.6",
-    "typescript": "^4.9.5",
+    "typescript": "^5.8.3",
     "yeoman-assert": "^3.1.1",
-    "yeoman-test": "^4.0.2"
+    "yeoman-environment": "^6.0.0",
+    "yeoman-test": "^11.5.2"
+  },
+  "overrides": {
+    "diff": "^8.0.3",
+    "serialize-javascript": "^7.0.5"
   }
 }
