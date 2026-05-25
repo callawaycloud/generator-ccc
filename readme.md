@@ -27,4 +27,5 @@ Requires **Node.js 22 LTS** (see `.nvmrc`).
 3. `npm link`
 4. `npm run watch`
 5. make changes
-6. open test project.  Run `yo ccc`
+6. `npm run typecheck`, `npm run lint`, and `npm test` before opening a PR
+7. open test project. Run `yo ccc`

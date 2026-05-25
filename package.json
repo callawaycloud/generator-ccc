@@ -8,7 +8,13 @@
     "build": "tsc",
     "prepare": "npm run build",
     "watch": "tsc -w",
-    "test": "mocha test/**/*.test.js --timeout 10000"
+    "typecheck": "tsc --noEmit -p tsconfig.test.json",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "build:test": "tsc -p tsconfig.test-emit.json",
+    "test": "npm run build:test && mocha test-dist/**/*.test.js --timeout 10000"
   },
   "author": "",
   "license": "ISC",
@@ -29,14 +35,20 @@
     "yosay": "^2.0.2"
   },
   "devDependencies": {
-    "@types/deepmerge": "^2.2.0",
+    "@eslint/js": "^10.0.1",
     "@types/mocha": "^10.0.10",
+    "@types/node": "^22.19.11",
     "@types/xml2js": "^0.4.14",
+    "@types/yeoman-assert": "^3.1.4",
     "@yeoman/adapter": "^4.0.1",
     "@yeoman/types": "^1.5.0",
+    "eslint": "^10.4.0",
+    "eslint-config-prettier": "^10.1.8",
     "mem-fs": "^4.1.0",
     "mocha": "^11.7.6",
+    "prettier": "^3.8.3",
     "typescript": "^5.8.3",
+    "typescript-eslint": "^8.59.4",
     "yeoman-assert": "^3.1.1",
     "yeoman-environment": "^6.0.0",
     "yeoman-test": "^11.5.2"

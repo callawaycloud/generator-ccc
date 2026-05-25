@@ -11,8 +11,11 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "outDir": "test-dist",
+    "rootDir": "test",
+    "types": ["node", "mocha"]
   },
-  "include": ["generators/**/*.ts", "types/**/*.d.ts"],
-  "exclude": ["node_modules"]
+  "include": ["test/**/*.ts"],
+  "exclude": ["node_modules", "test/fixtures"]
 }
