@@ -1,15 +1,26 @@
 {
   "name": "generator-ccc",
-  "version": "1.5.2",
+  "version": "2.0.0-alpha.0",
   "description": "",
-  "main": "index.js",
+  "type": "module",
+  "main": "generators/app/index.js",
   "scripts": {
-    "prepare": "tsc",
+    "build": "tsc",
+    "prepare": "npm run build",
     "watch": "tsc -w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "typecheck": "tsc --noEmit -p tsconfig.test.json",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "build:test": "tsc -p tsconfig.test-emit.json",
+    "test": "npm run build:test && mocha test-dist/**/*.test.js --timeout 10000"
   },
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "keywords": [
     "yeoman-generator"
   ],
@@ -17,18 +28,33 @@
     "generators"
   ],
   "dependencies": {
-    "chalk": "^3.0.0",
-    "deepmerge": "^4.2.2",
-    "strip-json-comments": "^2.0.1",
-    "update-notifier": "^4.0.0",
-    "xml2js": "^0.4.23",
-    "yeoman-generator": "^4.2.0",
+    "deepmerge": "^4.3.1",
+    "strip-json-comments": "^3.1.1",
+    "xml2js": "^0.6.2",
+    "yeoman-generator": "^7.5.1",
     "yosay": "^2.0.2"
   },
   "devDependencies": {
-    "@types/deepmerge": "^2.2.0",
-    "@types/xml2js": "^0.4.5",
-    "@types/yeoman-generator": "^3.1.4",
-    "typescript": "^3.7.3"
+    "@eslint/js": "^10.0.1",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.19.11",
+    "@types/xml2js": "^0.4.14",
+    "@types/yeoman-assert": "^3.1.4",
+    "@yeoman/adapter": "^4.0.1",
+    "@yeoman/types": "^1.5.0",
+    "eslint": "^10.4.0",
+    "eslint-config-prettier": "^10.1.8",
+    "mem-fs": "^4.1.0",
+    "mocha": "^11.7.6",
+    "prettier": "^3.8.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.59.4",
+    "yeoman-assert": "^3.1.1",
+    "yeoman-environment": "^6.0.0",
+    "yeoman-test": "^11.5.2"
+  },
+  "overrides": {
+    "diff": "^8.0.3",
+    "serialize-javascript": "^7.0.5"
   }
 }

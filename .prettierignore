@@ -1,0 +1,7 @@
+node_modules
+generators/**/*.js
+generators/app/templates
+package-lock.json
+test/fixtures
+test-dist
+.vscode

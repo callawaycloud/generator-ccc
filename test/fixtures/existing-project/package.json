@@ -1,0 +1,7 @@
+{
+    "name": "my-sfdx-project",
+    "version": "2.0.0",
+    "scripts": {
+        "test": "npm run lint"
+    }
+}

@@ -3,39 +3,47 @@ import yosay from "yosay";
 import path from "path";
 import { EOL } from "os";
 import merge from "deepmerge";
-import updateNotifier from "update-notifier";
-import pkg from "../../package.json";
+import type { ArrayMergeOptions } from "deepmerge";
 import { parseStringPromise as parseXml } from "xml2js";
 import stripJsonComments from "strip-json-comments";
 
-module.exports = class extends Generator {
-  private props: {};
+type JsonPrimitive = string | number | boolean | null;
+type JsonObject = { [key: string]: JsonValue };
+type JsonArray = JsonValue[];
+type JsonValue = JsonPrimitive | JsonObject | JsonArray;
 
-  constructor(args, opts) {
-    super(args, opts);
+function isJsonObject(value: JsonValue): value is JsonObject {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+interface PackageXml {
+  version?: string;
+  namespace?: string;
+  types?: Record<string, string[]>;
+}
+
+interface XmlPackageType {
+  name: string[];
+  members: string[];
+}
+
+interface ParsedPackageXml {
+  Package?: {
+    version?: string[];
+    $?: { xmlns?: string };
+    types?: XmlPackageType[];
+  };
+}
+
+export default class extends Generator {
+  public prompting(): void {
+    this.log(yosay("Callaway Cloud SFDX Project"));
   }
 
-  public prompting() {
-    // Have Yeoman greet the user.
-    this.log(yosay(`Callaway Cloud SFDX Project`));
-
-    const notifier = updateNotifier({ pkg });
-    notifier.notify();
-
-    const prompts = [];
-
-    return this.prompt(prompts).then((props) => {
-      // To access props later use this.props.someAnswer;
-      this.props = props;
+  public async writing(): Promise<void> {
+    this.fs.copy(this.templatePath(path.join(".", "static")), this.destinationPath("."), {
+      globOptions: { dot: true },
     });
-  }
-
-  public async writing() {
-    this.fs.copy(
-      this.templatePath(path.join(".", "static")),
-      this.destinationPath("."),
-      { globOptions: { dot: true } }
-    );
 
     await this.writeManifest();
     this.writeNpmPackage();
@@ -44,46 +52,30 @@ module.exports = class extends Generator {
     this.writeGitIgnore();
   }
 
-  private async writeManifest() {
-    const manifestPath = this.destinationPath(
-      path.join("manifest", "package.xml")
-    );
-    const oldPkgManifest: any = this.fs.exists(manifestPath)
-      ? await readPackage(this.fs.read(manifestPath))
+  private async writeManifest(): Promise<void> {
+    const manifestPath = this.destinationPath(path.join("manifest", "package.xml"));
+    const oldPkgManifest: PackageXml | null = this.fs.exists(manifestPath)
+      ? await readPackage(this.fs.read(manifestPath) ?? "")
       : null;
 
-    const defaultPath = this.templatePath(
-      path.join(".", "dynamic", "package.xml")
-    );
-    let defaultPkg = await readPackage(this.fs.read(defaultPath));
+    const defaultPath = this.templatePath(path.join(".", "dynamic", "package.xml"));
+    const defaultPkg = await readPackage(this.fs.read(defaultPath) ?? "");
 
-    let newPkgXml = oldPkgManifest
-      ? merge(defaultPkg, oldPkgManifest)
-      : defaultPkg;
+    const newPkgXml = oldPkgManifest ? merge(defaultPkg, oldPkgManifest) : defaultPkg;
     const newPkg = writePackage(newPkgXml);
     this.fs.write(manifestPath, newPkg);
   }
 
-  private writeNpmPackage() {
+  private writeNpmPackage(): void {
     const filePath = this.destinationPath("package.json");
 
-    // Extend or create package.json file in destination path
-    const npmPackagePath = this.destinationPath("package.json");
-    const oldPkgJson = this.fs.exists(npmPackagePath)
-      ? this.fs.readJSON(npmPackagePath)
-      : {};
-
-    // if there are key conflicts the rightmost (pkgJson) wins
-    let defaultJson = {
-      name: oldPkgJson.name
-        ? oldPkgJson.name
-        : path.basename(this.destinationPath(".")),
+    const defaultJson: JsonObject = {
+      name: path.basename(this.destinationPath(".")),
       scripts: {
         "pretty-quick": "pretty-quick --staged",
         "pretty-all-apex": "npx prettier --write 'src/**/*.{trigger,cls}'",
         clean: "sfdx force:source:clean",
-        "pkg-branch":
-          "sfdx git:package -d dist/$(git symbolic-ref --short HEAD)",
+        "pkg-branch": "sfdx git:package -d dist/$(git symbolic-ref --short HEAD)",
       },
       devDependencies: {
         husky: "^7.x",
@@ -99,16 +91,13 @@ module.exports = class extends Generator {
       },
     };
 
-    const newPkgJson = merge(oldPkgJson, defaultJson);
-    this.fs.write(npmPackagePath, JSON.stringify(newPkgJson, null, 4));
-
     this._private_deepMergeObjectsAndWriteToFile(filePath, defaultJson);
   }
 
-  private writePrettier() {
+  private writePrettier(): void {
     const filePath = this.destinationPath(".prettierrc");
 
-    const defaultJson = {
+    const defaultJson: JsonObject = {
       trailingComma: "none",
       printWidth: 120,
       tabWidth: 4,
@@ -144,19 +133,15 @@ module.exports = class extends Generator {
     this._private_deepMergeObjectsAndWriteToFile(filePath, defaultJson);
   }
 
-  /**
-   * .vscode files below
-   */
-
-  private writeVscodeFiles() {
+  private writeVscodeFiles(): void {
     this._private_writeVscodeLaunch();
     this._private_writeVscodeSettings();
   }
 
-  private _private_writeVscodeLaunch() {
+  private _private_writeVscodeLaunch(): void {
     const filePath = this.destinationPath(path.join(".vscode", "launch.json"));
 
-    const defaultJson = {
+    const defaultJson: JsonObject = {
       version: "0.2.0",
       configurations: [
         {
@@ -173,12 +158,10 @@ module.exports = class extends Generator {
     this._private_deepMergeObjectsAndWriteToFile(filePath, defaultJson);
   }
 
-  private _private_writeVscodeSettings() {
-    const filePath = this.destinationPath(
-      path.join(".vscode", "settings.json")
-    );
+  private _private_writeVscodeSettings(): void {
+    const filePath = this.destinationPath(path.join(".vscode", "settings.json"));
 
-    const defaultJson = {
+    const defaultJson: JsonObject = {
       "salesforcedx-vscode-core.show-cli-success-msg": false,
       "salesforcedx-vscode-core.push-or-deploy-on-save.enabled": true,
       "salesforcedx-vscode-core.detectConflictsAtSync": true,
@@ -194,59 +177,31 @@ module.exports = class extends Generator {
     this._private_deepMergeObjectsAndWriteToFile(filePath, defaultJson);
   }
 
-  /**
-   * Merge two JSONs together and write them to a file
-   * @param filePath The path to the file from the root directory of the project
-   * @param defaultJson The base JSON used in the event one does not exist yet
-   */
+  private _private_deepMergeObjectsAndWriteToFile(filePath: string, defaultJson: JsonObject): void {
+    const existingJsonString = this.fs.exists(filePath) ? (this.fs.read(filePath) ?? "{}") : "{}";
+    const existingJson = JSON.parse(stripJsonComments(existingJsonString)) as JsonObject;
 
-  private _private_deepMergeObjectsAndWriteToFile(filePath, defaultJson): void {
-    // Comments in JSON will break fs.readJSON, as well as JSON.parse, so we strip them out
-    const existingJsonString = this.fs.exists(filePath)
-      ? this.fs.read(filePath)
-      : "{}";
-    const existingJson = JSON.parse(stripJsonComments(existingJsonString));
+    const mergedJsons = this._private_deepMergeObjects(defaultJson, existingJson);
 
-    // console.log('filePath', filePath);
-    // console.log('existingJson');
-    // console.log(existingJson);
-
-    const mergedJsons = this._private_deepMergeObjects(
-      defaultJson,
-      existingJson
-    );
-
-    // console.log('mergedJsons');
-    // console.log(mergedJsons);
-    // console.log('\n\n');
-
-    // Strip all whitespace to see if we need to write any changes
     if (JSON.stringify(existingJson) !== JSON.stringify(mergedJsons)) {
       this.fs.writeJSON(filePath, mergedJsons);
     }
   }
 
-  /**
-   * Merge two JSONs.
-   * This takes the user's existing JSON from file path and overwrites the default.
-   * @param filePath The path to the file from the root directory of the project
-   * @param defaultJson The base JSON used in the event one does not exist yet
-   * @param defaultJson The JSON that already exists on the user's system
-   * @returns Object of the merged JSONs
-   */
-
-  private _private_deepMergeObjects(defaultJson, existingJson): object {
-    // deep merge... don't override user settings (Combines objects at the same index in the two arrays.)
-    const combineMerge = (target, source, options) => {
+  private _private_deepMergeObjects(defaultJson: JsonObject, existingJson: JsonObject): JsonObject {
+    const combineMerge = (
+      target: JsonValue[],
+      source: JsonValue[],
+      options: ArrayMergeOptions
+    ): JsonValue[] => {
       const destination = target.slice();
 
       source.forEach((item, index) => {
         if (typeof destination[index] === "undefined") {
-          destination[index] = options.cloneUnlessOtherwiseSpecified(
-            item,
-            options
-          );
-        } else if (options.isMergeableObject(item)) {
+          destination[index] = isJsonObject(item)
+            ? (options.cloneUnlessOtherwiseSpecified(item, options) as JsonValue)
+            : item;
+        } else if (isJsonObject(item) && isJsonObject(target[index])) {
           destination[index] = merge(target[index], item, options);
         } else if (target.indexOf(item) === -1) {
           destination.push(item);
@@ -258,15 +213,13 @@ module.exports = class extends Generator {
     return merge(defaultJson, existingJson, { arrayMerge: combineMerge });
   }
 
-  private writeGitIgnore() {
+  private writeGitIgnore(): void {
     const ignorePath = this.destinationPath(".gitignore");
-    const currentIgnore = this.fs.exists(ignorePath)
-      ? this.fs.read(ignorePath)
-      : "";
+    const currentIgnore = this.fs.exists(ignorePath) ? (this.fs.read(ignorePath) ?? "") : "";
 
     const currentIgnoreLines = currentIgnore.split(EOL);
     const defaultIgnores = ["dist/", "node_modules/"];
-    const missing = [];
+    const missing: string[] = [];
     for (const defaultIgnore of defaultIgnores) {
       if (!currentIgnoreLines.includes(defaultIgnore)) {
         missing.push(defaultIgnore);
@@ -278,10 +231,10 @@ module.exports = class extends Generator {
     }
   }
 
-  public install() {
-    /**
-     * Install dependent sfdx plugins
-     */
+  public install(): void {
+    if (this.options.skipInstall) {
+      return;
+    }
 
     this.log("Installing sfdx force-source-clean");
     this.spawnCommandSync("sfdx", ["plugins:install", "force-source-clean"]);
@@ -289,32 +242,19 @@ module.exports = class extends Generator {
     this.log("Installing sfdx sfdx-git-packager");
     this.spawnCommandSync("sfdx", ["plugins:install", "sfdx-git-packager"]);
 
-    // npm install
-    this.installDependencies({
-      bower: false,
-      npm: true,
-    });
+    this.spawnCommandSync("npm", ["install"]);
   }
-
-  end() {}
-};
-
-// HELPER (move to new file)
-
-interface PackageXml {
-  version?: string;
-  namespace?: string;
-  types?: { [type: string]: string[] };
 }
 
 async function readPackage(xmlStr: string): Promise<PackageXml> {
-  let xml = await parseXml(xmlStr);
-  let version = xml?.Package?.version?.[0];
-  let namespace = xml?.Package?.$?.xmlns;
-  let types: { [type: string]: string[] };
+  const xml = (await parseXml(xmlStr)) as ParsedPackageXml;
+  const version = xml.Package?.version?.[0];
+  const namespace = xml.Package?.$?.xmlns;
+  let types: PackageXml["types"] = {};
+
   if (xml.Package?.types) {
     try {
-      types = xml.Package.types.reduce((res, t) => {
+      types = xml.Package.types.reduce<Record<string, string[]>>((res, t) => {
         res[t.name[0]] = t.members;
         return res;
       }, {});
@@ -332,19 +272,20 @@ async function readPackage(xmlStr: string): Promise<PackageXml> {
 
 function writePackage(pkg: PackageXml): string {
   let types = "";
-  for (let key in pkg.types) {
-    types += `  <types>\n`;
-    types +=
-      [...new Set<string>(pkg.types[key])]
-        .map((m) => `    <members>${m}</members>`)
-        .join("\n") + "\n";
-    types += `    <name>${key}</name>\n`;
-    types += `  </types>\n`;
+  if (pkg.types) {
+    for (const key in pkg.types) {
+      types += "  <types>\n";
+      types +=
+        [...new Set<string>(pkg.types[key])].map((m) => `    <members>${m}</members>`).join("\n") +
+        "\n";
+      types += `    <name>${key}</name>\n`;
+      types += "  </types>\n";
+    }
   }
 
   return `<?xml version="1.0" encoding="UTF-8" ?>
-<Package xmlns="${pkg.namespace}">
-${types}  <version>${pkg.version}</version>
+<Package xmlns="${pkg.namespace ?? ""}">
+${types}  <version>${pkg.version ?? ""}</version>
 </Package>
 `;
 }
