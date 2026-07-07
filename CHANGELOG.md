@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0-beta.0] - 2026-07-07
+
 ### Added
 - Native TypeScript CLI with `init` (default), `upgrade`, `doctor`, and `setup-ci` commands, replacing the Yeoman generator workflow; `ccc` bin alias; scaffolded Cursor rules/skills and Salesforce MCP config (`.cursor/`).
 - Publish inline Code Insights annotations on PRs for Code Analyzer findings, deploy component failures, and Apex test failures.
@@ -36,4 +38,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use a valid `report_type` (`TEST`) when publishing the deployment package Code Insights card, fixing the HTTP 400 from the Bitbucket Reports API.
 - Stop `insights.sh` printing success messages when the underlying Bitbucket API calls fail; it now logs clear warnings (including likely auth/scope causes) instead.
 
-[Unreleased]: https://github.com/callawaycloud/generator-ccc/commits/HEAD
+[Unreleased]: https://github.com/callawaycloud/generator-ccc/compare/v2.0.0-beta.0...HEAD
+[2.0.0-beta.0]: https://github.com/callawaycloud/generator-ccc/compare/v2.0.0-alpha.0...v2.0.0-beta.0
