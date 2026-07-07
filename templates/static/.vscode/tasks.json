@@ -1,0 +1,71 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "SF: Retrieve My Changes",
+      "type": "shell",
+      "command": "sf project retrieve start --manifest manifest/package.xml",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "SF: Preview Deployment Package",
+      "type": "shell",
+      "command": "sf sgd source delta --from \"origin/{{defaultBranch}}\" --to HEAD --output-dir dist --generate-delta && cat dist/package/package.xml",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "SF: Run Tests in Current File",
+      "type": "shell",
+      "command": "sf apex run test --tests ${fileBasenameNoExtension} --result-format human --synchronous",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "SF: Open Default Org",
+      "type": "shell",
+      "command": "sf org open",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "SF: Check Org Connection",
+      "type": "shell",
+      "command": "sf org display",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "SF: Deploy Current File (source tracking)",
+      "type": "shell",
+      "command": "sf project deploy start --source-dir ${file}",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}

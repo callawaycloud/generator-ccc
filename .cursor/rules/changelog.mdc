@@ -1,0 +1,42 @@
+---
+alwaysApply: true
+description: Changelog conventions for this repository
+---
+
+# Changelog Conventions
+
+All notable user-visible changes MUST be recorded in `CHANGELOG.md` at the repo root. The file follows [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## Format
+
+- One bullet per user-visible change, written from the user's perspective.
+- Group bullets under one of these headings only: `### Added`, `### Changed`, `### Deprecated`, `### Removed`, `### Fixed`, `### Security`.
+- New work goes under the `## [Unreleased]` section at the top.
+
+## When To Update `[Unreleased]`
+
+Update the changelog at these checkpoints. Do NOT skip them.
+
+- **Before creating a git commit**: if the staged changes include any user-visible behavior, add or amend an `[Unreleased]` bullet in the same commit.
+- **Before opening or updating a pull request**: ensure `[Unreleased]` reflects every user-visible change introduced by the PR.
+- **When working on a Jira issue**: every Jira issue tracked under this project (see `.cursor/rules/jira-scope.mdc` if present) MUST have at least one corresponding `[Unreleased]` bullet by the time the issue is transitioned to Done. Append the issue key as a markdown link at the end of the bullet, for example: `- Add token refresh ([ABC-118](https://your-domain.atlassian.net/browse/ABC-118))`.
+
+If a commit, PR, or Jira-issue completion would happen without the required CHANGELOG entry, STOP and add the entry first.
+
+## When To Skip
+
+The changelog does NOT need an entry for:
+
+- Pure formatting, whitespace, or comment-only edits.
+- Internal refactors with no user-visible behavior change, UNLESS the work is tied to a Jira issue (then still add a bullet).
+- In-progress work not yet being committed.
+
+## Release Time
+
+When cutting a release:
+
+1. Rename `## [Unreleased]` to `## [<version>] - <date>` using the new semver version and `YYYY-MM-DD` date.
+2. Add a new empty `## [Unreleased]` section above it.
+3. Update the compare-link footer at the bottom of the file:
+   - Add a new entry: `[<version>]: <repo_url>/compare/v<previous>...v<version>`.
+   - Update the `[Unreleased]` link to compare from the new version.

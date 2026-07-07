@@ -1,0 +1,35 @@
+---
+alwaysApply: true
+description: Salesforce org-development-model project rules for AI agents working with Bitbucket CI and sf CLI v2.
+---
+
+# Salesforce Project Rules
+
+This is a Salesforce **org development model** project. Metadata lives in `src/` (source format). All Salesforce CLI work uses **sf CLI v2** — never legacy `sfdx force:*` commands.
+
+## Branch Rules
+
+The `{{defaultBranch}}` branch mirrors production and must **never** be committed to directly. Every change goes through a feature branch and the Bitbucket pull-request pipeline.
+
+## Deployment Workflow
+
+1. **Build Package** (automatic on PR) — syncs production into `{{defaultBranch}}`, merges it into the PR branch, and builds an incremental deployment package with sfdx-git-delta (including `destructiveChanges.xml` when needed).
+2. **Check Package** (manual) — runs a check-only deployment with tests; results appear on the PR.
+3. **Quick Deploy** (manual) — performs the quick deploy, auto-merges the branch into `{{defaultBranch}}`, and deletes the feature branch.
+
+## Preview a Deployment Package Locally
+
+Run the **SF: Preview Deployment Package** task (or `sf sgd source delta --from "origin/{{defaultBranch}}" --to HEAD --output-dir dist --generate-delta`) to see what would be deployed.
+
+## PR Description Flags
+
+- `!skipSync` — skip the production sync during Build Package.
+- `!tests=Foo,Bar` — run only the listed Apex test classes during Check Package.
+
+## Formatting
+
+Prettier formats Apex and LWC on commit via the pre-commit hook.
+
+## Full Pipeline Guide
+
+See [docs/ci.md](../../docs/ci.md) for the complete CI/CD reference.
