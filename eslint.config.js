@@ -4,7 +4,7 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["node_modules/", "generators/**/*.js", "generators/app/templates/**", "test-dist/**"],
+    ignores: ["node_modules/", "generators/**", "dist/**", "templates/**", "test-dist/**"],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
@@ -18,7 +18,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ["generators/**/*.ts", "test/**/*.ts"],
+    files: ["src/**/*.ts", "test/**/*.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],

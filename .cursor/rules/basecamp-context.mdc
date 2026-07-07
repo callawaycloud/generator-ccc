@@ -1,0 +1,36 @@
+---
+alwaysApply: true
+description: BaseCamp context for this repository
+---
+
+# BaseCamp Context
+
+This repository is linked to a BaseCamp project. Use these paths and keys whenever BaseCamp context is needed.
+
+- BaseCamp project: `~/Desktop/CCC/BaseCamp/clients/internal/projects/generator-ccc`
+- BaseCamp client: `~/Desktop/CCC/BaseCamp/clients/internal`
+- Client slug: `internal`
+- Project slug: `generator-ccc`
+- Jira project: `SP`
+- Project anchor epic: (none)
+- Client umbrella epic: `SP-938`
+
+## How To Use BaseCamp From This Repo
+
+- To READ BaseCamp context (todos, decisions, notes, Jira keys, client metadata), use the `check-basecamp` skill. It is read-mostly and will not modify BaseCamp.
+- To WRITE BaseCamp updates (todos, decisions, meeting notes, project metadata, Jira ticket filing, status changes), use the `update-basecamp` skill. It enforces BaseCamp conventions in the linked BaseCamp repo.
+- Tickets created from work in this repo MUST use Jira project `SP`. Prefer the project anchor epic (none) when set; otherwise fall back to the client umbrella epic `SP-938` if set; otherwise file with no epic. Never invent a Jira project key.
+- Todos belonging to this repo's work live in `~/Desktop/CCC/BaseCamp/clients/internal/projects/generator-ccc/todos.md`, in one of the three sections `## In Progress`, `## Backlog`, `## Done`. Do NOT create a root `TODO.md` in this repo for BaseCamp-tracked work.
+
+## Write-Back Nudge
+
+After completing meaningful work in this repo — a ticket finished, a decision made,
+meeting notes captured, or a milestone reached — run `update-basecamp` before ending
+the session to persist changes back to BaseCamp (`todos.md`, `decisions.md`, meeting
+notes, or frontmatter). Do not rely on end-of-day automation alone; update BaseCamp
+as you go when the outcome is clear.
+
+## Project-Specific Notes
+
+- Jira project `SP` requires Story Points (`customfield_10004`) on create; default to `1`.
+- The legacy Yeoman generator under `generators/` is reference-only and out of scope.

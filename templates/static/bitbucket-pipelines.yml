@@ -1,0 +1,163 @@
+image: salesforce/cli:latest-full
+
+clone:
+  depth: full
+
+definitions:
+  caches:
+    sf-plugins: ~/.local/share/sf
+  scripts:
+    - &skip-ci-guard if git log -1 | grep -q "\\[skip ci\\]"; then printf 'CI Commit... Skipping pipeline!'; exit; fi
+    - &pr-dest-branch-guard if [ "${BITBUCKET_PR_DESTINATION_BRANCH}" != "{{defaultBranch}}" ]; then printf 'Destination is not {{defaultBranch}}... Skipping pipeline'; exit; fi
+    - &setup bash build/setup.sh
+    - &destructive-args |
+      DESTRUCTIVE_ARGS=""
+      if [ -f dist/destructiveChanges/destructiveChanges.xml ] && grep -q '<members>' dist/destructiveChanges/destructiveChanges.xml 2>/dev/null; then
+        DESTRUCTIVE_ARGS="--post-destructive-changes dist/destructiveChanges/destructiveChanges.xml"
+      fi
+    - &fetch-pr-description pr_description=$(curl --fail --show-error -s -u "${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/pullrequests/${BITBUCKET_PR_ID}" | jq -r '.description') || pr_description=""
+    - &parse-skipsync |
+      if echo "$pr_description" | grep -qi '!skipsync'; then
+        SKIP_SYNC=1
+      else
+        SKIP_SYNC=0
+      fi
+      echo "Skip Sync ${SKIP_SYNC}"
+    - &parse-tests-from-pr |
+      TESTS=$(echo "$pr_description" | grep -i '!tests=' | cut -d "=" -f 2-) || true
+      TESTS="${TESTS//,/ }"
+      TESTS="${TESTS#"${TESTS%%[![:space:]]*}"}"
+      TESTS="${TESTS%"${TESTS##*[![:space:]]}"}"
+      echo "Tests ${TESTS}"
+      if [ -n "${TESTS}" ]; then
+        TEST_ARGS="--test-level RunSpecifiedTests --tests ${TESTS}"
+      else
+        TEST_ARGS="--test-level RunLocalTests"
+      fi
+  steps:
+    - step: &sf-cached-step
+        caches:
+          - sf-plugins
+
+pipelines:
+  pull-requests:
+    "**":
+      - step:
+          <<: *sf-cached-step
+          name: "Build Package"
+          script:
+            - *skip-ci-guard
+            - *pr-dest-branch-guard
+            - *setup
+            - *fetch-pr-description
+            - *parse-skipsync
+            - bash build/sync.sh "$SKIP_SYNC"
+            - bash build/package.sh
+            - bash build/insights.sh package
+            - |
+              echo "=== Code Analysis (best-effort) ==="
+              CHANGED="$(git diff --name-only "origin/{{defaultBranch}}"...HEAD | tr '\n' ' ' || true)"
+              if [ -n "${CHANGED}" ]; then
+                echo "y" | sf plugins install code-analyzer 2>/dev/null || true
+                mkdir -p dist/code-analysis
+                sf code-analyzer run --workspace ${CHANGED} --output-file dist/code-analysis/results.html --output-file dist/code-analysis/results.json || true
+              fi
+            - bash build/insights.sh analysis
+          artifacts:
+            - dist/**
+            - test-results/**
+      - step:
+          <<: *sf-cached-step
+          name: Check Package
+          trigger: manual
+          script:
+            - *setup
+            - *fetch-pr-description
+            - *parse-tests-from-pr
+            - *destructive-args
+            - |
+              VALIDATE_JSON=$(sf project deploy validate -x dist/package/package.xml ${DESTRUCTIVE_ARGS} ${TEST_ARGS} --junit --results-dir test-results --async --json)
+              echo "${VALIDATE_JSON}" | jq -r '.result.id' > dist/deploy_id.txt
+              echo "Validate job id: $(cat dist/deploy_id.txt)"
+              sf project deploy report --job-id "$(cat dist/deploy_id.txt)" --wait 240 || true
+              STATUS=$(sf project deploy report --job-id "$(cat dist/deploy_id.txt)" --json | jq -r '.result.status')
+              echo "Validation status: ${STATUS}"
+              if [ "${STATUS}" != "Succeeded" ]; then
+                echo "Package validation failed"
+                exit 1
+              fi
+              echo "=== Next steps ==="
+              echo "Validation passed. Next: get PR approval, then click 'Quick Deploy' to release."
+          after-script:
+            - bash build/insights.sh validation
+          artifacts:
+            - dist/**
+            - test-results/**
+      - step:
+          <<: *sf-cached-step
+          name: Quick Deploy
+          trigger: manual
+          deployment: production
+          script:
+            - *setup
+            - |
+              echo "Quick deploy job id: $(cat dist/deploy_id.txt)"
+              sf project deploy quick --job-id "$(cat dist/deploy_id.txt)" --wait 240
+            - bash build/merge.sh
+          artifacts:
+            - dist/**
+            - test-results/**
+  custom:
+    Sync Production:
+      - step:
+          <<: *sf-cached-step
+          script:
+            - *setup
+            - bash build/sync.sh
+    Deploy to Production:
+      - variables:
+          - name: Enter1ToSkipProdSync
+      - step:
+          <<: *sf-cached-step
+          deployment: production
+          script:
+            - *setup
+            - bash build/sync.sh "$Enter1ToSkipProdSync"
+            - bash build/package.sh
+            - *destructive-args
+            - |
+              DEPLOY_JSON=$(sf project deploy start --manifest dist/package/package.xml ${DESTRUCTIVE_ARGS} --test-level RunLocalTests --junit --results-dir test-results --async --json)
+              echo "${DEPLOY_JSON}" | jq -r '.result.id' > dist/deploy_id.txt
+              echo "Deploy job id: $(cat dist/deploy_id.txt)"
+              sf project deploy resume --job-id "$(cat dist/deploy_id.txt)" --wait 240 --verbose
+            - bash build/merge.sh
+          artifacts:
+            - dist/**
+            - test-results/**
+    Deploy to Production (Selective Tests):
+      - variables:
+          - name: Enter1ToSkipProdSync
+          - name: Tests
+      - step:
+          <<: *sf-cached-step
+          deployment: production
+          script:
+            - *setup
+            - bash build/sync.sh "$Enter1ToSkipProdSync"
+            - bash build/package.sh
+            - *destructive-args
+            - |
+              TESTS="${Tests//,/ }"
+              DEPLOY_JSON=$(sf project deploy start --manifest dist/package/package.xml ${DESTRUCTIVE_ARGS} --test-level RunSpecifiedTests --tests ${TESTS} --junit --results-dir test-results --async --json)
+              echo "${DEPLOY_JSON}" | jq -r '.result.id' > dist/deploy_id.txt
+              echo "Deploy job id: $(cat dist/deploy_id.txt)"
+              sf project deploy resume --job-id "$(cat dist/deploy_id.txt)" --wait 240 --verbose
+            - bash build/merge.sh
+          artifacts:
+            - dist/**
+            - test-results/**
+    Scheduled Production Sync:
+      - step:
+          <<: *sf-cached-step
+          script:
+            - bash build/schedule.sh

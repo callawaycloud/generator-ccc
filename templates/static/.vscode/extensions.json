@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "salesforce.salesforcedx-vscode",
+    "esbenp.prettier-vscode",
+    "chuckjonas.apex-pmd",
+    "redhat.vscode-yaml"
+  ]
+}

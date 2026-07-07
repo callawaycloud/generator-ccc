@@ -13,9 +13,9 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "outDir": "test-dist",
-    "rootDir": "test",
+    "rootDir": ".",
     "types": ["node", "mocha"]
   },
-  "include": ["test/**/*.ts"],
-  "exclude": ["node_modules", "test/fixtures"]
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["node_modules", "test/fixtures", "generators/**"]
 }
