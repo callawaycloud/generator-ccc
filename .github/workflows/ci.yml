@@ -136,6 +136,17 @@ jobs:
 
       - name: Publish
         # Do not run lifecycle scripts — protects against malicious package scripts at publish time.
-        run: npm publish --ignore-scripts --provenance --access public
+        # Prerelease versions must use an explicit dist-tag; npm rejects publishing them to latest.
+        run: |
+          set -euo pipefail
+          VERSION=$(jq -r '.version' package.json)
+          PUBLISH_ARGS=(--ignore-scripts --provenance --access public)
+          if [[ "${VERSION}" == *-* ]]; then
+            PRERELEASE_TAG="${VERSION##*-}"
+            PRERELEASE_TAG="${PRERELEASE_TAG%%.*}"
+            echo "Prerelease version ${VERSION}; publishing with dist-tag ${PRERELEASE_TAG}"
+            PUBLISH_ARGS+=(--tag "${PRERELEASE_TAG}")
+          fi
+          npm publish "${PUBLISH_ARGS[@]}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
