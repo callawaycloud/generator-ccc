@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Declare the GitHub repository in `package.json` so npm Trusted Publisher provenance validation passes, and allow the publish job to be triggered manually via workflow dispatch.
+
 ## [2.0.0-alpha.2] - 2026-07-07
 
 ### Fixed

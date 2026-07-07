@@ -5,9 +5,10 @@ on:
     types: [opened, synchronize, reopened, edited, closed]
     branches:
       - master
+  workflow_dispatch:
 
 concurrency:
-  group: ci-${{ github.event.pull_request.number }}
+  group: ci-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 permissions:
@@ -49,7 +50,7 @@ jobs:
   check-version:
     name: Check version bump
     needs: build-and-test
-    if: github.event.pull_request.merged == false && github.event.action != 'closed'
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == false && github.event.action != 'closed'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -116,7 +117,7 @@ jobs:
   publish-package:
     name: Publish to npm
     needs: build-and-test
-    if: github.event.pull_request.merged == true && github.event.action == 'closed'
+    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.event.action == 'closed')
     runs-on: ubuntu-latest
     permissions:
       contents: read
