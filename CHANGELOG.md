@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Update CI workflow to current GitHub Action versions (checkout v7, setup-node v6, github-script v9)
+
 ## [2.0.0-alpha.1] - 2026-07-07
 
 ### Added
