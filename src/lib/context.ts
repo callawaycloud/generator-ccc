@@ -15,11 +15,10 @@ export interface ProjectContext {
  * Checks origin HEAD, then local main/master, defaulting to "main".
  */
 export function detectDefaultBranch(cwd: string): string {
-  const originHead = spawnSync(
-    "git",
-    ["symbolic-ref", "refs/remotes/origin/HEAD"],
-    { cwd, encoding: "utf-8" }
-  );
+  const originHead = spawnSync("git", ["symbolic-ref", "refs/remotes/origin/HEAD"], {
+    cwd,
+    encoding: "utf-8",
+  });
 
   if (originHead.status === 0 && originHead.stdout) {
     const trimmed = originHead.stdout.trim();
@@ -47,11 +46,9 @@ export function detectDefaultBranch(cwd: string): string {
  * Returns true when a local git branch ref exists.
  */
 function branchExists(cwd: string, branchName: string): boolean {
-  const result = spawnSync(
-    "git",
-    ["show-ref", "--verify", "--quiet", `refs/heads/${branchName}`],
-    { cwd }
-  );
+  const result = spawnSync("git", ["show-ref", "--verify", "--quiet", `refs/heads/${branchName}`], {
+    cwd,
+  });
   return result.status === 0;
 }
 

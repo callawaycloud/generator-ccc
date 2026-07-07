@@ -218,11 +218,7 @@ export class BitbucketClient {
   /**
    * Creates a scheduled pipeline run for a custom pipeline on a branch.
    */
-  async createSchedule(
-    pipelineName: string,
-    branch: string,
-    cronPattern: string
-  ): Promise<void> {
+  async createSchedule(pipelineName: string, branch: string, cronPattern: string): Promise<void> {
     const response = await this.request(`${this.baseUrl}/pipelines_config/schedules`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

@@ -20,9 +20,9 @@ description: Deploy Salesforce metadata changes to production via the Bitbucket 
 
 ## PR description flags
 
-| Flag | Effect |
-| --- | --- |
-| `!skipSync` | Skip production sync during Build Package |
+| Flag             | Effect                                            |
+| ---------------- | ------------------------------------------------- |
+| `!skipSync`      | Skip production sync during Build Package         |
 | `!tests=Foo,Bar` | Run only listed test classes during Check Package |
 
 ## Full pipeline guide

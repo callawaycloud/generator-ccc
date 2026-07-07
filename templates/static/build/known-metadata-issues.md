@@ -2,7 +2,7 @@
 
 ## Problems with Flow
 
-There seems to be a bug, where regardless of the API version specified in `sfdx-project.json`, it always pulls using the latest version of the API.  When you go to deploy, if your projects API version is incompatible, it will result in errors like:
+There seems to be a bug, where regardless of the API version specified in `sfdx-project.json`, it always pulls using the latest version of the API. When you go to deploy, if your projects API version is incompatible, it will result in errors like:
 
 - `queriedFields field is set, you also need to set the following fields: sObjectOutputReference.`
 - `Property 'storeOutputAutomatically' not valid in version 45.0`
@@ -11,7 +11,7 @@ There seems to be a bug, where regardless of the API version specified in `sfdx-
 
 ### Resolution
 
-Update the `sourceApiVersion` in `sfdx-project.json` to the latest version of the API available in production.  If the sandbox is pre-release, it might be possible that you cannot deploy to metadata retrieved from there.
+Update the `sourceApiVersion` in `sfdx-project.json` to the latest version of the API available in production. If the sandbox is pre-release, it might be possible that you cannot deploy to metadata retrieved from there.
 
 ## Entity type 'LightningComponentBundle' is not available in this api version
 

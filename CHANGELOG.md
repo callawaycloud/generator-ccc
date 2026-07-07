@@ -7,9 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.0.0-beta.0] - 2026-07-07
+## [2.0.0-alpha.1] - 2026-07-07
 
 ### Added
+
 - Native TypeScript CLI with `init` (default), `upgrade`, `doctor`, and `setup-ci` commands, replacing the Yeoman generator workflow; `ccc` bin alias; scaffolded Cursor rules/skills and Salesforce MCP config (`.cursor/`).
 - Publish inline Code Insights annotations on PRs for Code Analyzer findings, deploy component failures, and Apex test failures.
 - Add `analysis` mode to `insights.sh` for a Code Analysis report card (`ccc-analysis`).
@@ -20,14 +21,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Bitbucket remote and pipeline configuration checks to `doctor` (authenticated checks when `BITBUCKET_TOKEN` is set).
 
 ### Changed
+
 - Replace Yeoman `yo ccc` scaffolding with `npx generator-ccc`; require Node.js 22+; `upgrade` now previews and re-applies templates.
 - Show the plain-language deployment summary ("This deployment contains: 3 Flows, 2 Apex Classes. Deletions: 1 Field.") in the Deployment Package Code Insights card, which needs no repository variables.
 
 ### Removed
+
 - The Yeoman generator (`generators/app`) is no longer published; `yo ccc` unsupported.
 - Remove the PR deployment summary comment (`build/pr-comment.sh`); app-password auth posted comments as the credential owner's personal account, and the Code Insights card now carries the same summary with no credentials at all.
 
 ### Fixed
+
 - Production-branch deletion guard in the merge pipeline script.
 - Bitbucket credentials no longer echoed to pipeline logs during production sync.
 - `!tests=` PR flag now passes multiple test classes to `sf` correctly.
@@ -38,5 +42,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use a valid `report_type` (`TEST`) when publishing the deployment package Code Insights card, fixing the HTTP 400 from the Bitbucket Reports API.
 - Stop `insights.sh` printing success messages when the underlying Bitbucket API calls fail; it now logs clear warnings (including likely auth/scope causes) instead.
 
-[Unreleased]: https://github.com/callawaycloud/generator-ccc/compare/v2.0.0-beta.0...HEAD
-[2.0.0-beta.0]: https://github.com/callawaycloud/generator-ccc/compare/v2.0.0-alpha.0...v2.0.0-beta.0
+[Unreleased]: https://github.com/callawaycloud/generator-ccc/compare/v2.0.0-alpha.1...HEAD
+[2.0.0-alpha.1]: https://github.com/callawaycloud/generator-ccc/compare/v2.0.0-alpha.0...v2.0.0-alpha.1

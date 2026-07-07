@@ -251,10 +251,7 @@ function getBitbucketAuthenticatedChecks(): DoctorCheck[] {
       name: "Bitbucket schedule",
       run: async (): Promise<DoctorResult> => {
         try {
-          const hasSchedule = await client.hasSchedule(
-            SCHEDULED_PIPELINE_NAME,
-            defaultBranch
-          );
+          const hasSchedule = await client.hasSchedule(SCHEDULED_PIPELINE_NAME, defaultBranch);
           if (!hasSchedule) {
             return {
               passed: false,

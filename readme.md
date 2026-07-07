@@ -21,21 +21,21 @@ That's it. The CLI will:
 
 ## Commands
 
-| Command | What it does |
-| --- | --- |
-| `npx generator-ccc` (or `init`) | Scaffold a new project or merge defaults into an existing one |
-| `npx generator-ccc upgrade` | Preview files that would change, confirm, then re-apply templates. JSON configs are deep-merged (existing values win); non-JSON scaffold files (pipelines, build scripts, `.cursor/`, `docs/ci.md`, etc.) are updated to the latest templates |
-| `npx generator-ccc doctor` | Verify project files, build script permissions, sf CLI, and (with `BITBUCKET_TOKEN` set) Bitbucket Pipelines configuration |
-| `npx generator-ccc setup-ci` | Configure Bitbucket Pipelines via the API. Requires a Bitbucket `origin` remote; prompts for a repository access token |
+| Command                         | What it does                                                                                                                                                                                                                                  |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npx generator-ccc` (or `init`) | Scaffold a new project or merge defaults into an existing one                                                                                                                                                                                 |
+| `npx generator-ccc upgrade`     | Preview files that would change, confirm, then re-apply templates. JSON configs are deep-merged (existing values win); non-JSON scaffold files (pipelines, build scripts, `.cursor/`, `docs/ci.md`, etc.) are updated to the latest templates |
+| `npx generator-ccc doctor`      | Verify project files, build script permissions, sf CLI, and (with `BITBUCKET_TOKEN` set) Bitbucket Pipelines configuration                                                                                                                    |
+| `npx generator-ccc setup-ci`    | Configure Bitbucket Pipelines via the API. Requires a Bitbucket `origin` remote; prompts for a repository access token                                                                                                                        |
 
 ### Flags
 
-| Flag | Scope |
-| --- | --- |
-| `--help` | Global — show usage |
-| `--skip-install` | `init`, `upgrade` — skip sf plugin and npm install |
+| Flag               | Scope                                              |
+| ------------------ | -------------------------------------------------- |
+| `--help`           | Global — show usage                                |
+| `--skip-install`   | `init`, `upgrade` — skip sf plugin and npm install |
 | `--skip-bitbucket` | `init` — skip the Bitbucket Pipelines setup prompt |
-| `--yes` | `upgrade` — skip the confirmation prompt |
+| `--yes`            | `upgrade` — skip the confirmation prompt           |
 
 ## What gets configured
 

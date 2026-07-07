@@ -9,7 +9,7 @@ export function getPackageJsonDefaults(ctx: ProjectContext): JsonObject {
     name: ctx.projectName,
     scripts: {
       "pretty-quick": "pretty-quick --staged",
-      "pretty-all-apex": "prettier --write \"src/**/*.{trigger,cls}\"",
+      "pretty-all-apex": 'prettier --write "src/**/*.{trigger,cls}"',
       delta: `sf sgd source delta --to HEAD --from origin/${ctx.defaultBranch} --output-dir dist`,
       retrieve: "sf project retrieve start -x manifest/package.xml",
     },

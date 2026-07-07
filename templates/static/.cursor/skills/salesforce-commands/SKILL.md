@@ -9,13 +9,13 @@ This project uses **sf CLI v2** only — never legacy `sfdx force:*` commands.
 
 ## Common commands
 
-| Task | Command |
-| --- | --- |
-| Retrieve changes | `sf project retrieve start --manifest manifest/package.xml` |
+| Task                       | Command                                                                                              |
+| -------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Retrieve changes           | `sf project retrieve start --manifest manifest/package.xml`                                          |
 | Preview deployment package | `sf sgd source delta --from "origin/{{defaultBranch}}" --to HEAD --output-dir dist --generate-delta` |
-| Run tests (current file) | `sf apex run test --tests <ClassName> --result-format human --synchronous` |
-| Deploy single file | `sf project deploy start --source-dir <path>` |
-| Check org connection | `sf org display` |
+| Run tests (current file)   | `sf apex run test --tests <ClassName> --result-format human --synchronous`                           |
+| Deploy single file         | `sf project deploy start --source-dir <path>`                                                        |
+| Check org connection       | `sf org display`                                                                                     |
 
 ## VS Code / Cursor tasks
 

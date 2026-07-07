@@ -89,10 +89,10 @@ Report cards and inline annotations use Bitbucket's in-pipeline authentication, 
 
 Add these anywhere in the pull request description. They are case-insensitive.
 
-| Flag | What it does | When to use |
-| --- | --- | --- |
-| `!skipSync` | Skips syncing production into `{{defaultBranch}}` during Build Package | You know production has not changed since the last sync and want a faster build |
-| `!tests=Foo,Bar` | Runs only the listed Apex test classes during Check Package | Large orgs where a full test run is slow and you know which tests cover your change |
+| Flag             | What it does                                                           | When to use                                                                         |
+| ---------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `!skipSync`      | Skips syncing production into `{{defaultBranch}}` during Build Package | You know production has not changed since the last sync and want a faster build     |
+| `!tests=Foo,Bar` | Runs only the listed Apex test classes during Check Package            | Large orgs where a full test run is slow and you know which tests cover your change |
 
 Example:
 
@@ -106,12 +106,12 @@ Update Account validation rule.
 
 Beyond the PR pipeline, you can run these from **Pipelines → Run pipeline → Custom**:
 
-| Pipeline | What it does | When to use |
-| --- | --- | --- |
-| **Sync Production** | Pulls production metadata into `{{defaultBranch}}` and commits | Production changed outside the normal PR flow and you need `{{defaultBranch}}` updated now |
-| **Deploy to Production** | Syncs production, builds a package from the current branch, deploys with all tests, merges to `{{defaultBranch}}` | Emergency or hotfix deploy from a branch without going through the PR Check/Quick Deploy steps |
-| **Deploy to Production (Selective Tests)** | Same as above but runs only the test classes you specify | Hotfix where you need a faster deploy and know which tests to run |
-| **Scheduled Production Sync** | Checks when production was last synced; syncs if the interval has elapsed | Runs on a schedule to keep `{{defaultBranch}}` close to production even when no one is deploying |
+| Pipeline                                   | What it does                                                                                                      | When to use                                                                                      |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **Sync Production**                        | Pulls production metadata into `{{defaultBranch}}` and commits                                                    | Production changed outside the normal PR flow and you need `{{defaultBranch}}` updated now       |
+| **Deploy to Production**                   | Syncs production, builds a package from the current branch, deploys with all tests, merges to `{{defaultBranch}}` | Emergency or hotfix deploy from a branch without going through the PR Check/Quick Deploy steps   |
+| **Deploy to Production (Selective Tests)** | Same as above but runs only the test classes you specify                                                          | Hotfix where you need a faster deploy and know which tests to run                                |
+| **Scheduled Production Sync**              | Checks when production was last synced; syncs if the interval has elapsed                                         | Runs on a schedule to keep `{{defaultBranch}}` close to production even when no one is deploying |
 
 For **Deploy to Production** pipelines, set **Enter1ToSkipProdSync** to `1` if you want to skip the production sync step.
 
@@ -119,10 +119,10 @@ For **Deploy to Production** pipelines, set **Enter1ToSkipProdSync** to `1` if y
 
 A daily (recommended) schedule on `{{defaultBranch}}` runs **Scheduled Production Sync**. It compares the time since the last "Auto-Pull of Production" commit against a configurable interval.
 
-| Variable | Default | Purpose |
-| --- | --- | --- |
-| `PRODUCTION_SYNC_INTERVAL` | `3` (days) | Minimum days between automatic production syncs |
-| `SYNC_AS_PR` | unset | When set to `1`, production changes are opened as a pull request instead of committed directly to `{{defaultBranch}}` |
+| Variable                   | Default    | Purpose                                                                                                               |
+| -------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------- |
+| `PRODUCTION_SYNC_INTERVAL` | `3` (days) | Minimum days between automatic production syncs                                                                       |
+| `SYNC_AS_PR`               | unset      | When set to `1`, production changes are opened as a pull request instead of committed directly to `{{defaultBranch}}` |
 
 Set these under **Repository settings → Pipelines → Repository variables**.
 
@@ -130,10 +130,10 @@ Recommended schedule: daily at a low-traffic time (for example 3:00 AM), branch 
 
 ## Bitbucket API credentials
 
-| Variable | Secured | Purpose |
-| --- | --- | --- |
-| `BITBUCKET_USERNAME` | Yes | Bitbucket account username for REST API calls |
-| `BITBUCKET_APP_PASSWORD` | Yes | Bitbucket app password for REST API calls |
+| Variable                 | Secured | Purpose                                       |
+| ------------------------ | ------- | --------------------------------------------- |
+| `BITBUCKET_USERNAME`     | Yes     | Bitbucket account username for REST API calls |
+| `BITBUCKET_APP_PASSWORD` | Yes     | Bitbucket app password for REST API calls     |
 
 These are required to parse PR description flags (`!skipSync`, `!tests=`) during **Build Package** and **Check Package**, and to open pull requests when `SYNC_AS_PR=1`. Add them as secured repository variables alongside the others.
 
@@ -151,12 +151,12 @@ If you need to configure Bitbucket yourself:
 
 ## Troubleshooting
 
-| Symptom | Likely cause | What to do |
-| --- | --- | --- |
-| Pipeline fails immediately with auth error | `AUTH_URL` expired or invalid | Re-authorize the production org, run `sf org display --verbose`, update the secured `AUTH_URL` variable |
-| Build Package fails on merge | Conflict between your branch and synced `{{defaultBranch}}` | Pull latest `{{defaultBranch}}`, merge or rebase into your feature branch, resolve conflicts, push |
-| Quick Deploy fails with "validation invalidated" | Too much time passed since Check Package, or production changed | Re-run **Check Package**, then try Quick Deploy again |
-| Check Package reports test failures | Apex tests failed against the check-only deploy | Fix failing tests or metadata on your branch, push, wait for Build Package, re-run Check Package |
-| Scheduled sync never runs | Schedule not created or interval not elapsed | Confirm the schedule exists on `{{defaultBranch}}`; check `PRODUCTION_SYNC_INTERVAL` value and last sync commit message |
-| Package is empty or missing expected metadata | Change not committed or not in `src/` | Verify files are tracked in git under `src/`; run the **SF: Preview Deployment Package** task locally to compare |
-| No report cards or inline annotations on the PR | Report publishing skipped or failed (it never blocks the build) | Check the Build Package or Check Package log for WARN lines from `insights.sh`; annotations on lines not part of the PR diff are only visible in the report view, not inline |
+| Symptom                                          | Likely cause                                                    | What to do                                                                                                                                                                   |
+| ------------------------------------------------ | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pipeline fails immediately with auth error       | `AUTH_URL` expired or invalid                                   | Re-authorize the production org, run `sf org display --verbose`, update the secured `AUTH_URL` variable                                                                      |
+| Build Package fails on merge                     | Conflict between your branch and synced `{{defaultBranch}}`     | Pull latest `{{defaultBranch}}`, merge or rebase into your feature branch, resolve conflicts, push                                                                           |
+| Quick Deploy fails with "validation invalidated" | Too much time passed since Check Package, or production changed | Re-run **Check Package**, then try Quick Deploy again                                                                                                                        |
+| Check Package reports test failures              | Apex tests failed against the check-only deploy                 | Fix failing tests or metadata on your branch, push, wait for Build Package, re-run Check Package                                                                             |
+| Scheduled sync never runs                        | Schedule not created or interval not elapsed                    | Confirm the schedule exists on `{{defaultBranch}}`; check `PRODUCTION_SYNC_INTERVAL` value and last sync commit message                                                      |
+| Package is empty or missing expected metadata    | Change not committed or not in `src/`                           | Verify files are tracked in git under `src/`; run the **SF: Preview Deployment Package** task locally to compare                                                             |
+| No report cards or inline annotations on the PR  | Report publishing skipped or failed (it never blocks the build) | Check the Build Package or Check Package log for WARN lines from `insights.sh`; annotations on lines not part of the PR diff are only visible in the report view, not inline |

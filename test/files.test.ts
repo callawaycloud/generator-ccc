@@ -4,15 +4,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createProjectContext } from "../src/lib/context.js";
 import { scaffoldProject } from "../src/commands/init.js";
-import {
-  copyStaticTemplates,
-  previewStaticTemplateChanges,
-} from "../src/lib/files.js";
-import {
-  cleanupTempDir,
-  createTempDir,
-  readText,
-} from "./helpers.js";
+import { copyStaticTemplates, previewStaticTemplateChanges } from "../src/lib/files.js";
+import { cleanupTempDir, createTempDir, readText } from "./helpers.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.resolve(__dirname, "../..");
@@ -29,11 +22,7 @@ describe("static template overwrite", function () {
   beforeEach(function () {
     tmpDir = createTempDir("ccc-files-overwrite-");
     fs.mkdirSync(tmpDir, { recursive: true });
-    fs.writeFileSync(
-      path.join(tmpDir, PIPELINE_RELATIVE_PATH),
-      MODIFIED_PIPELINE_CONTENT,
-      "utf-8"
-    );
+    fs.writeFileSync(path.join(tmpDir, PIPELINE_RELATIVE_PATH), MODIFIED_PIPELINE_CONTENT, "utf-8");
   });
 
   afterEach(function () {
@@ -83,10 +72,9 @@ describe("static template overwrite", function () {
   });
 
   it("records skipped when overwriteStatic content is identical", function () {
-    const templateContent = readText(path.join(STATIC_TEMPLATE_DIR, PIPELINE_RELATIVE_PATH)).replaceAll(
-      "{{defaultBranch}}",
-      DEFAULT_BRANCH
-    );
+    const templateContent = readText(
+      path.join(STATIC_TEMPLATE_DIR, PIPELINE_RELATIVE_PATH)
+    ).replaceAll("{{defaultBranch}}", DEFAULT_BRANCH);
     fs.writeFileSync(path.join(tmpDir, PIPELINE_RELATIVE_PATH), templateContent, "utf-8");
 
     const summary = copyStaticTemplates({

@@ -3,11 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import * as p from "@clack/prompts";
-import {
-  createProjectContext,
-  detectDefaultBranch,
-  type ProjectContext,
-} from "../lib/context.js";
+import { createProjectContext, detectDefaultBranch, type ProjectContext } from "../lib/context.js";
 import {
   appendGitignore,
   copyStaticTemplates,
@@ -61,7 +57,12 @@ export function findPackageRoot(startDir: string): string {
 
 const PACKAGE_ROOT = findPackageRoot(path.dirname(fileURLToPath(import.meta.url)));
 export const STATIC_TEMPLATE_DIR = path.join(PACKAGE_ROOT, "templates", "static");
-export const DEFAULT_MANIFEST_TEMPLATE = path.join(PACKAGE_ROOT, "templates", "dynamic", "package.xml");
+export const DEFAULT_MANIFEST_TEMPLATE = path.join(
+  PACKAGE_ROOT,
+  "templates",
+  "dynamic",
+  "package.xml"
+);
 
 /**
  * Resolves the destination root for scaffolding (defaults to cwd).

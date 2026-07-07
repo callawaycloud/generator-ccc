@@ -19,16 +19,10 @@ export function printManualChecklist(
   repoSlug: string | null,
   defaultBranch: string
 ): void {
-  const lines: string[] = [
-    "Manual Bitbucket CI setup:",
-    "",
-    "1. Enable Pipelines",
-  ];
+  const lines: string[] = ["Manual Bitbucket CI setup:", "", "1. Enable Pipelines"];
 
   if (workspace !== null && repoSlug !== null) {
-    lines.push(
-      `   ${`https://bitbucket.org/${workspace}/${repoSlug}/admin/pipelines/settings`}`
-    );
+    lines.push(`   ${`https://bitbucket.org/${workspace}/${repoSlug}/admin/pipelines/settings`}`);
   } else {
     lines.push("   Repository settings → Pipelines → Settings → Enable Pipelines");
   }
@@ -57,9 +51,7 @@ export function printManualChecklist(
   );
 
   if (workspace !== null && repoSlug !== null) {
-    lines.push(
-      `   ${`https://bitbucket.org/${workspace}/${repoSlug}/admin/pipelines/schedules`}`
-    );
+    lines.push(`   ${`https://bitbucket.org/${workspace}/${repoSlug}/admin/pipelines/schedules`}`);
   } else {
     lines.push("   Pipelines → Schedules → New schedule");
   }
@@ -183,15 +175,9 @@ export async function runSetupCi(options: SetupCiOptions = {}): Promise<void> {
       scheduleSpinner.stop("Scheduled production sync already exists");
     } else {
       scheduleSpinner.message("Creating scheduled production sync");
-      await client.createSchedule(
-        SCHEDULED_PIPELINE_NAME,
-        defaultBranch,
-        SCHEDULED_PIPELINE_CRON
-      );
+      await client.createSchedule(SCHEDULED_PIPELINE_NAME, defaultBranch, SCHEDULED_PIPELINE_CRON);
       scheduleSpinner.stop("Scheduled production sync created");
-      configured.push(
-        `scheduled "${SCHEDULED_PIPELINE_NAME}" on ${defaultBranch} (daily 3:00 AM)`
-      );
+      configured.push(`scheduled "${SCHEDULED_PIPELINE_NAME}" on ${defaultBranch} (daily 3:00 AM)`);
     }
   } catch (error) {
     scheduleSpinner.stop("Failed to configure schedule");

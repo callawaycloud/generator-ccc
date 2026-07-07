@@ -1,10 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import * as p from "@clack/prompts";
-import {
-  createProjectContext,
-  detectDefaultBranch,
-} from "../lib/context.js";
+import { createProjectContext, detectDefaultBranch } from "../lib/context.js";
 import {
   previewGitignoreChange,
   previewJsonDefaultsChange,
@@ -138,9 +135,21 @@ async function collectChangingFiles(
     changes.push("manifest/package.xml");
   }
 
-  const jsonFiles: Array<{ path: string; relative: string; defaults: ReturnType<typeof getPackageJsonDefaults> }> = [
-    { path: path.join(ctx.destRoot, "package.json"), relative: "package.json", defaults: getPackageJsonDefaults(ctx) },
-    { path: path.join(ctx.destRoot, ".prettierrc"), relative: ".prettierrc", defaults: getPrettierDefaults() },
+  const jsonFiles: Array<{
+    path: string;
+    relative: string;
+    defaults: ReturnType<typeof getPackageJsonDefaults>;
+  }> = [
+    {
+      path: path.join(ctx.destRoot, "package.json"),
+      relative: "package.json",
+      defaults: getPackageJsonDefaults(ctx),
+    },
+    {
+      path: path.join(ctx.destRoot, ".prettierrc"),
+      relative: ".prettierrc",
+      defaults: getPrettierDefaults(),
+    },
     {
       path: path.join(ctx.destRoot, ".vscode", "settings.json"),
       relative: ".vscode/settings.json",

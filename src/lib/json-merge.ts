@@ -63,10 +63,7 @@ export type JsonMergeResult = "created" | "merged" | "skipped";
  * Reads an existing JSON file (or treats missing file as empty), deep-merges with defaults,
  * and writes only when the merged result differs from what is on disk.
  */
-export function mergeJsonFile(
-  filePath: string,
-  defaultJson: JsonObject
-): JsonMergeResult {
+export function mergeJsonFile(filePath: string, defaultJson: JsonObject): JsonMergeResult {
   const fileExists = existsSync(filePath);
   const existingContent = fileExists ? readFileSync(filePath, "utf-8") : "{}";
   const existingJson = parseJsonContent(existingContent);
@@ -88,10 +85,7 @@ export function mergeJsonFile(
 /**
  * Computes the merged JSON without writing; returns null when no change would occur.
  */
-export function previewJsonMerge(
-  filePath: string,
-  defaultJson: JsonObject
-): JsonObject | null {
+export function previewJsonMerge(filePath: string, defaultJson: JsonObject): JsonObject | null {
   const fileExists = existsSync(filePath);
   const existingContent = fileExists ? readFileSync(filePath, "utf-8") : "{}";
   const existingJson = parseJsonContent(existingContent);

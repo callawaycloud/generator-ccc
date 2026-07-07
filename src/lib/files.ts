@@ -191,10 +191,7 @@ export function appendGitignore(destRoot: string, entries: readonly string[]): F
 /**
  * Returns true when gitignore would change if entries were appended.
  */
-export function previewGitignoreChange(
-  destRoot: string,
-  entries: readonly string[]
-): boolean {
+export function previewGitignoreChange(destRoot: string, entries: readonly string[]): boolean {
   const ignorePath = path.join(destRoot, ".gitignore");
   const currentIgnore = existsSync(ignorePath) ? readFileSync(ignorePath, "utf-8") : "";
   const currentIgnoreLines = currentIgnore.split(EOL);

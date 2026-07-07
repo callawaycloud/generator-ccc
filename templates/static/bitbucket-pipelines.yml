@@ -7,19 +7,15 @@ definitions:
   caches:
     sf-plugins: ~/.local/share/sf
   scripts:
-    - &skip-ci-guard
-      if git log -1 | grep -q "\\[skip ci\\]"; then printf 'CI Commit... Skipping pipeline!'; exit; fi
-    - &pr-dest-branch-guard
-      if [ "${BITBUCKET_PR_DESTINATION_BRANCH}" != "{{defaultBranch}}" ]; then printf 'Destination is not {{defaultBranch}}... Skipping pipeline'; exit; fi
-    - &setup
-      bash build/setup.sh
+    - &skip-ci-guard if git log -1 | grep -q "\\[skip ci\\]"; then printf 'CI Commit... Skipping pipeline!'; exit; fi
+    - &pr-dest-branch-guard if [ "${BITBUCKET_PR_DESTINATION_BRANCH}" != "{{defaultBranch}}" ]; then printf 'Destination is not {{defaultBranch}}... Skipping pipeline'; exit; fi
+    - &setup bash build/setup.sh
     - &destructive-args |
       DESTRUCTIVE_ARGS=""
       if [ -f dist/destructiveChanges/destructiveChanges.xml ] && grep -q '<members>' dist/destructiveChanges/destructiveChanges.xml 2>/dev/null; then
         DESTRUCTIVE_ARGS="--post-destructive-changes dist/destructiveChanges/destructiveChanges.xml"
       fi
-    - &fetch-pr-description
-      pr_description=$(curl --fail --show-error -s -u "${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/pullrequests/${BITBUCKET_PR_ID}" | jq -r '.description') || pr_description=""
+    - &fetch-pr-description pr_description=$(curl --fail --show-error -s -u "${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/pullrequests/${BITBUCKET_PR_ID}" | jq -r '.description') || pr_description=""
     - &parse-skipsync |
       if echo "$pr_description" | grep -qi '!skipsync'; then
         SKIP_SYNC=1
