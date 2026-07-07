@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
+## [2.0.0-alpha.2] - 2026-07-07
 
-- Update CI workflow to current GitHub Action versions (checkout v7, setup-node v6, github-script v9)
+### Fixed
+
+- Publish prerelease versions to npm with the correct dist-tag (`alpha`, `beta`, etc.) so CI publish succeeds when `latest` is a stable release.
 
 ## [2.0.0-alpha.1] - 2026-07-07
 
@@ -28,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Replace Yeoman `yo ccc` scaffolding with `npx generator-ccc`; require Node.js 22+; `upgrade` now previews and re-applies templates.
 - Show the plain-language deployment summary ("This deployment contains: 3 Flows, 2 Apex Classes. Deletions: 1 Field.") in the Deployment Package Code Insights card, which needs no repository variables.
+- Update CI workflow to current GitHub Action versions (checkout v7, setup-node v6, github-script v9)
 
 ### Removed
 
@@ -46,5 +49,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use a valid `report_type` (`TEST`) when publishing the deployment package Code Insights card, fixing the HTTP 400 from the Bitbucket Reports API.
 - Stop `insights.sh` printing success messages when the underlying Bitbucket API calls fail; it now logs clear warnings (including likely auth/scope causes) instead.
 
-[Unreleased]: https://github.com/callawaycloud/generator-ccc/compare/v2.0.0-alpha.1...HEAD
+[Unreleased]: https://github.com/callawaycloud/generator-ccc/compare/v2.0.0-alpha.2...HEAD
+[2.0.0-alpha.2]: https://github.com/callawaycloud/generator-ccc/compare/v2.0.0-alpha.1...v2.0.0-alpha.2
 [2.0.0-alpha.1]: https://github.com/callawaycloud/generator-ccc/compare/v2.0.0-alpha.0...v2.0.0-alpha.1
