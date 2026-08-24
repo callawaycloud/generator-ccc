@@ -57,17 +57,21 @@ Build Package:
 2. Merges `{{defaultBranch}}` into your feature branch so conflicts surface early.
 3. Builds an incremental deployment package with sfdx-git-delta, including `destructiveChanges.xml` when deletions are detected.
 
+Empty `destructiveChanges` output is stripped — `dist/destructiveChanges` only exists when something will actually be deleted. When real deletions are present, the pipeline logs a loud banner and the **Deployment Package** report card fails (red).
+
 When it finishes, download the pipeline artifacts to inspect `package.xml` and `destructiveChanges.xml` if needed.
 
 ### 5. Run Check Package
 
 Click **Check Package** in the pipeline. This performs a check-only deployment against production and runs Apex tests. Test results are posted on the pull request.
 
+If the package contains deletions, **Check Package** is blocked until you add `!confirmDelete` to the PR description. Review the destructive-changes XML in the pipeline artifacts before confirming.
+
 Review the results before proceeding. If tests fail, fix the issues on your branch and push — Build Package will run again.
 
 ### 6. Quick Deploy
 
-When Check Package succeeds and the PR is approved, click **Quick Deploy**. This:
+When Check Package succeeds and the PR is approved, click **Quick Deploy**. Quick Deploy only runs after a successful Check Package, so it does not re-prompt for deletion confirmation. This:
 
 1. Deploys the previously validated package to production (no re-run of tests).
 2. Merges your branch into `{{defaultBranch}}`.
@@ -77,7 +81,7 @@ You are done. Production and `{{defaultBranch}}` are back in sync.
 
 ## PR report cards
 
-After **Build Package** completes, a **Deployment Package** report card appears on the pull request with a plain-language summary of the package contents ("This deployment contains: 3 Flows, 2 Apex Classes. Deletions: 1 Field."), plus component count, metadata types, and a destructive-changes indicator.
+After **Build Package** completes, a **Deployment Package** report card appears on the pull request with a plain-language summary of the package contents ("This deployment contains: 3 Flows, 2 Apex Classes. Deletions: 1 Field."), plus component count, metadata types, and a destructive-changes indicator. When the package includes deletions, the card **fails (red)** with a warning that Check Package needs `!confirmDelete`.
 
 After Build Package, a **Code Analysis** report card summarizes Salesforce Code Analyzer findings for changed files, and each finding is pinned as an inline annotation on the exact file and line in the PR diff (severity-badged, sorted by severity, capped at Bitbucket's 1,000-annotation limit).
 
@@ -89,10 +93,11 @@ Report cards and inline annotations use Bitbucket's in-pipeline authentication, 
 
 Add these anywhere in the pull request description. They are case-insensitive.
 
-| Flag             | What it does                                                           | When to use                                                                         |
-| ---------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `!skipSync`      | Skips syncing production into `{{defaultBranch}}` during Build Package | You know production has not changed since the last sync and want a faster build     |
-| `!tests=Foo,Bar` | Runs only the listed Apex test classes during Check Package            | Large orgs where a full test run is slow and you know which tests cover your change |
+| Flag             | What it does                                                                                               | When to use                                                                              |
+| ---------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `!skipSync`      | Skips syncing production into `{{defaultBranch}}` during Build Package                                     | You know production has not changed since the last sync and want a faster build          |
+| `!tests=Foo,Bar` | Runs only the listed Apex test classes during Check Package                                                | Large orgs where a full test run is slow and you know which tests cover your change      |
+| `!confirmDelete` | Required when the package contains deletions; Check Package fails until this flag is in the PR description | You have reviewed `destructiveChanges.xml` and intend to delete metadata from production |
 
 Example:
 
@@ -102,18 +107,24 @@ Update Account validation rule.
 !tests=AccountValidationTest,AccountTriggerTest
 ```
 
+## Destructive changes
+
+Deleting or renaming metadata in git relative to the production branch (`{{defaultBranch}}`) becomes a Salesforce metadata deletion in the deployment package. API-name renames are treated as delete plus create — for fields and objects this means data loss. Custom fields and custom objects often go to the Salesforce recycle bin for about 15 days; Apex classes and LWC bundles are removed from the org but remain in git history.
+
+The pipeline never deletes Salesforce **records** — only metadata definitions.
+
 ## Manual pipelines
 
 Beyond the PR pipeline, you can run these from **Pipelines → Run pipeline → Custom**:
 
-| Pipeline                                   | What it does                                                                                                      | When to use                                                                                      |
-| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| **Sync Production**                        | Pulls production metadata into `{{defaultBranch}}` and commits                                                    | Production changed outside the normal PR flow and you need `{{defaultBranch}}` updated now       |
-| **Deploy to Production**                   | Syncs production, builds a package from the current branch, deploys with all tests, merges to `{{defaultBranch}}` | Emergency or hotfix deploy from a branch without going through the PR Check/Quick Deploy steps   |
-| **Deploy to Production (Selective Tests)** | Same as above but runs only the test classes you specify                                                          | Hotfix where you need a faster deploy and know which tests to run                                |
-| **Scheduled Production Sync**              | Checks when production was last synced; syncs if the interval has elapsed                                         | Runs on a schedule to keep `{{defaultBranch}}` close to production even when no one is deploying |
+| Pipeline                                   | What it does                                                                                                                                                                                                                                | When to use                                                                                      |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **Sync Production**                        | Pulls production metadata into `{{defaultBranch}}` and commits                                                                                                                                                                              | Production changed outside the normal PR flow and you need `{{defaultBranch}}` updated now       |
+| **Deploy to Production**                   | Syncs production, builds a package from the current branch, deploys with all tests, merges to `{{defaultBranch}}`. Fails before deploy if the package has deletions unless run-time variable `ConfirmDeletions` is set to exactly `DELETE`. | Emergency or hotfix deploy from a branch without going through the PR Check/Quick Deploy steps   |
+| **Deploy to Production (Selective Tests)** | Same as above but runs only the test classes you specify. Fails before deploy if the package has deletions unless `ConfirmDeletions` is set to exactly `DELETE`.                                                                            | Hotfix where you need a faster deploy and know which tests to run                                |
+| **Scheduled Production Sync**              | Checks when production was last synced; syncs if the interval has elapsed                                                                                                                                                                   | Runs on a schedule to keep `{{defaultBranch}}` close to production even when no one is deploying |
 
-For **Deploy to Production** pipelines, set **Enter1ToSkipProdSync** to `1` if you want to skip the production sync step.
+For **Deploy to Production** pipelines, set **Enter1ToSkipProdSync** to `1` if you want to skip the production sync step. If the package contains deletions, set **ConfirmDeletions** to exactly `DELETE` after reviewing the destructive-changes XML.
 
 ## Scheduled production sync
 
@@ -135,7 +146,7 @@ Recommended schedule: daily at a low-traffic time (for example 3:00 AM), branch 
 | `BITBUCKET_USERNAME`     | Yes     | Bitbucket account username for REST API calls |
 | `BITBUCKET_APP_PASSWORD` | Yes     | Bitbucket app password for REST API calls     |
 
-These are required to parse PR description flags (`!skipSync`, `!tests=`) during **Build Package** and **Check Package**, and to open pull requests when `SYNC_AS_PR=1`. Add them as secured repository variables alongside the others.
+These are required to parse PR description flags (`!skipSync` during **Build Package**; `!tests=` and `!confirmDelete` during **Check Package**), and to open pull requests when `SYNC_AS_PR=1`. Add them as secured repository variables alongside the others.
 
 ## Setup
 
@@ -151,12 +162,13 @@ If you need to configure Bitbucket yourself:
 
 ## Troubleshooting
 
-| Symptom                                          | Likely cause                                                    | What to do                                                                                                                                                                   |
-| ------------------------------------------------ | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Pipeline fails immediately with auth error       | `AUTH_URL` expired or invalid                                   | Re-authorize the production org, run `sf org display --verbose`, update the secured `AUTH_URL` variable                                                                      |
-| Build Package fails on merge                     | Conflict between your branch and synced `{{defaultBranch}}`     | Pull latest `{{defaultBranch}}`, merge or rebase into your feature branch, resolve conflicts, push                                                                           |
-| Quick Deploy fails with "validation invalidated" | Too much time passed since Check Package, or production changed | Re-run **Check Package**, then try Quick Deploy again                                                                                                                        |
-| Check Package reports test failures              | Apex tests failed against the check-only deploy                 | Fix failing tests or metadata on your branch, push, wait for Build Package, re-run Check Package                                                                             |
-| Scheduled sync never runs                        | Schedule not created or interval not elapsed                    | Confirm the schedule exists on `{{defaultBranch}}`; check `PRODUCTION_SYNC_INTERVAL` value and last sync commit message                                                      |
-| Package is empty or missing expected metadata    | Change not committed or not in `src/`                           | Verify files are tracked in git under `src/`; run the **SF: Preview Deployment Package** task locally to compare                                                             |
-| No report cards or inline annotations on the PR  | Report publishing skipped or failed (it never blocks the build) | Check the Build Package or Check Package log for WARN lines from `insights.sh`; annotations on lines not part of the PR diff are only visible in the report view, not inline |
+| Symptom                                                                        | Likely cause                                                    | What to do                                                                                                                                                                   |
+| ------------------------------------------------------------------------------ | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pipeline fails immediately with auth error                                     | `AUTH_URL` expired or invalid                                   | Re-authorize the production org, run `sf org display --verbose`, update the secured `AUTH_URL` variable                                                                      |
+| Build Package fails on merge                                                   | Conflict between your branch and synced `{{defaultBranch}}`     | Pull latest `{{defaultBranch}}`, merge or rebase into your feature branch, resolve conflicts, push                                                                           |
+| Quick Deploy fails with "validation invalidated"                               | Too much time passed since Check Package, or production changed | Re-run **Check Package**, then try Quick Deploy again                                                                                                                        |
+| Check Package reports test failures                                            | Apex tests failed against the check-only deploy                 | Fix failing tests or metadata on your branch, push, wait for Build Package, re-run Check Package                                                                             |
+| Scheduled sync never runs                                                      | Schedule not created or interval not elapsed                    | Confirm the schedule exists on `{{defaultBranch}}`; check `PRODUCTION_SYNC_INTERVAL` value and last sync commit message                                                      |
+| Package is empty or missing expected metadata                                  | Change not committed or not in `src/`                           | Verify files are tracked in git under `src/`; run the **SF: Preview Deployment Package** task locally to compare                                                             |
+| No report cards or inline annotations on the PR                                | Report publishing skipped or failed (it never blocks the build) | Check the Build Package or Check Package log for WARN lines from `insights.sh`; annotations on lines not part of the PR diff are only visible in the report view, not inline |
+| Check Package or custom Deploy fails with a destructive-changes blocked banner | Deletions in the package without explicit confirmation          | Add `!confirmDelete` to the PR description (after reviewing `destructiveChanges.xml`), or re-run the custom **Deploy to Production** pipeline with `ConfirmDeletions=DELETE` |

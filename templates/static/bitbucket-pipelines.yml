@@ -12,7 +12,7 @@ definitions:
     - &setup bash build/setup.sh
     - &destructive-args |
       DESTRUCTIVE_ARGS=""
-      if [ -f dist/destructiveChanges/destructiveChanges.xml ] && grep -q '<members>' dist/destructiveChanges/destructiveChanges.xml 2>/dev/null; then
+      if [ -f dist/destructiveChanges/destructiveChanges.xml ]; then
         DESTRUCTIVE_ARGS="--post-destructive-changes dist/destructiveChanges/destructiveChanges.xml"
       fi
     - &fetch-pr-description pr_description=$(curl --fail --show-error -s -u "${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/pullrequests/${BITBUCKET_PR_ID}" | jq -r '.description') || pr_description=""
@@ -23,6 +23,13 @@ definitions:
         SKIP_SYNC=0
       fi
       echo "Skip Sync ${SKIP_SYNC}"
+    - &parse-confirmdelete |
+      if echo "$pr_description" | grep -qi '!confirmdelete'; then
+        CONFIRM_DELETE=1
+      else
+        CONFIRM_DELETE=0
+      fi
+      echo "Confirm Delete ${CONFIRM_DELETE}"
     - &parse-tests-from-pr |
       TESTS=$(echo "$pr_description" | grep -i '!tests=' | cut -d "=" -f 2-) || true
       TESTS="${TESTS//,/ }"
@@ -74,7 +81,9 @@ pipelines:
             - *setup
             - *fetch-pr-description
             - *parse-tests-from-pr
+            - *parse-confirmdelete
             - *destructive-args
+            - bash build/destructive-guard.sh "$CONFIRM_DELETE"
             - |
               VALIDATE_JSON=$(sf project deploy validate -x dist/package/package.xml ${DESTRUCTIVE_ARGS} ${TEST_ARGS} --junit --results-dir test-results --async --json)
               echo "${VALIDATE_JSON}" | jq -r '.result.id' > dist/deploy_id.txt
@@ -117,6 +126,7 @@ pipelines:
     Deploy to Production:
       - variables:
           - name: Enter1ToSkipProdSync
+          - name: ConfirmDeletions
       - step:
           <<: *sf-cached-step
           deployment: production
@@ -125,6 +135,12 @@ pipelines:
             - bash build/sync.sh "$Enter1ToSkipProdSync"
             - bash build/package.sh
             - *destructive-args
+            - |
+              if [ "${ConfirmDeletions:-}" = "DELETE" ]; then
+                bash build/destructive-guard.sh 1
+              else
+                bash build/destructive-guard.sh 0
+              fi
             - |
               DEPLOY_JSON=$(sf project deploy start --manifest dist/package/package.xml ${DESTRUCTIVE_ARGS} --test-level RunLocalTests --junit --results-dir test-results --async --json)
               echo "${DEPLOY_JSON}" | jq -r '.result.id' > dist/deploy_id.txt
@@ -138,6 +154,7 @@ pipelines:
       - variables:
           - name: Enter1ToSkipProdSync
           - name: Tests
+          - name: ConfirmDeletions
       - step:
           <<: *sf-cached-step
           deployment: production
@@ -146,6 +163,12 @@ pipelines:
             - bash build/sync.sh "$Enter1ToSkipProdSync"
             - bash build/package.sh
             - *destructive-args
+            - |
+              if [ "${ConfirmDeletions:-}" = "DELETE" ]; then
+                bash build/destructive-guard.sh 1
+              else
+                bash build/destructive-guard.sh 0
+              fi
             - |
               TESTS="${Tests//,/ }"
               DEPLOY_JSON=$(sf project deploy start --manifest dist/package/package.xml ${DESTRUCTIVE_ARGS} --test-level RunSpecifiedTests --tests ${TESTS} --junit --results-dir test-results --async --json)

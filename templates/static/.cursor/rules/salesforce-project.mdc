@@ -14,7 +14,7 @@ The `{{defaultBranch}}` branch mirrors production and must **never** be committe
 ## Deployment Workflow
 
 1. **Build Package** (automatic on PR) — syncs production into `{{defaultBranch}}`, merges it into the PR branch, and builds an incremental deployment package with sfdx-git-delta (including `destructiveChanges.xml` when needed).
-2. **Check Package** (manual) — runs a check-only deployment with tests; results appear on the PR.
+2. **Check Package** (manual) — runs a check-only deployment with tests; results appear on the PR. Blocked until the PR description contains `!confirmDelete` if the package includes deletions.
 3. **Quick Deploy** (manual) — performs the quick deploy, auto-merges the branch into `{{defaultBranch}}`, and deletes the feature branch.
 
 ## Preview a Deployment Package Locally
@@ -25,6 +25,7 @@ Run the **SF: Preview Deployment Package** task (or `sf sgd source delta --from 
 
 - `!skipSync` — skip the production sync during Build Package.
 - `!tests=Foo,Bar` — run only the listed Apex test classes during Check Package.
+- `!confirmDelete` — required when the package contains deletions; Check Package fails until this flag is in the PR description.
 
 ## Formatting
 

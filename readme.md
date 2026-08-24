@@ -39,7 +39,7 @@ That's it. The CLI will:
 
 ## What gets configured
 
-1. **Bitbucket Pipelines CI/CD** — validate on PR, manual check + quick deploy, automatic merge and branch cleanup, scheduled production sync, JUnit test reporting, deployment dashboard, inline PR annotations, and automatic destructive-change handling. See the generated `docs/ci.md` for the full guide.
+1. **Bitbucket Pipelines CI/CD** — validate on PR, manual check + quick deploy, automatic merge and branch cleanup, scheduled production sync, JUnit test reporting, deployment dashboard, inline PR annotations, and destructive-change handling that requires explicit confirmation before anything is deleted. See the generated `docs/ci.md` for the full guide.
 2. **Cursor / VS Code** — palette tasks for common Salesforce operations (retrieve, preview deployment package, run tests, open org), recommended extensions, Cursor project rules (`.cursor/rules/`), Cursor skills (`.cursor/skills/`), and the official Salesforce MCP server (`.cursor/mcp.json`).
 3. **Formatting** — prettier 3 with `prettier-plugin-apex` and a husky pre-commit hook.
 4. **Project defaults** — `manifest/package.xml`, `.gitignore` entries, VS Code settings, and npm scripts.

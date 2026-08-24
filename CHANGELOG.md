@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Require explicit confirmation before validating or deploying destructive metadata: `!confirmDelete` on pull requests and `ConfirmDeletions=DELETE` on custom Deploy to Production pipelines. The Deployment Package report card fails (red) when deletions are present. ([#86](https://github.com/callawaycloud/generator-ccc/issues/86))
+
 ### Fixed
 
 - Declare the GitHub repository in `package.json` so npm Trusted Publisher provenance validation passes, and allow the publish job to be triggered manually via workflow dispatch.
+- Strip empty `destructiveChanges` output from the CI package so `dist/destructiveChanges` only exists when something will actually be deleted. ([#86](https://github.com/callawaycloud/generator-ccc/issues/86))
 
 ## [2.0.0-alpha.2] - 2026-07-07
 
