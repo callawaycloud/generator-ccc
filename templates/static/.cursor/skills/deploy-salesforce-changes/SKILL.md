@@ -15,15 +15,16 @@ description: Deploy Salesforce metadata changes to production via the Bitbucket 
 2. **Commit your changes** under `src/` with a clear message.
 3. **Open a pull request** targeting `{{defaultBranch}}`.
 4. **Build Package** (automatic on PR) — syncs production into `{{defaultBranch}}`, merges into the PR branch, builds an incremental package via sfdx-git-delta.
-5. **Check Package** (manual) — check-only deploy with tests; results appear on the PR. Review test results before proceeding.
+5. **Check Package** (manual) — check-only deploy with tests; results appear on the PR. Review test results before proceeding. Blocked until the PR description contains `!confirmDelete` if the package includes deletions.
 6. **Quick Deploy** (manual) — quick deploys to production, auto-merges to `{{defaultBranch}}`, deletes the feature branch.
 
 ## PR description flags
 
-| Flag             | Effect                                            |
-| ---------------- | ------------------------------------------------- |
-| `!skipSync`      | Skip production sync during Build Package         |
-| `!tests=Foo,Bar` | Run only listed test classes during Check Package |
+| Flag             | Effect                                                                                                     |
+| ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| `!skipSync`      | Skip production sync during Build Package                                                                  |
+| `!tests=Foo,Bar` | Run only listed test classes during Check Package                                                          |
+| `!confirmDelete` | Required when the package contains deletions; Check Package fails until this flag is in the PR description |
 
 ## Full pipeline guide
 

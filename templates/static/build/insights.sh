@@ -17,7 +17,7 @@ usage() {
 }
 
 _has_destructive_members() {
-  [ -f "$DESTRUCTIVE_XML" ] && grep -q '<members>' "$DESTRUCTIVE_XML"
+  [ -f "$DESTRUCTIVE_XML" ]
 }
 
 _metadata_types_text() {
@@ -64,12 +64,16 @@ package_report() {
 
   # The details text renders on the PR card, so it carries the human-readable
   # summary — visible without any repository variables configured.
-  if [ "$total" -gt 0 ]; then
+  if [ "$has_destructive" = "true" ]; then
+    result="FAILED"
+    details="WARNING: this package DELETES metadata — add !confirmDelete to the PR description to allow Check Package."
+    if [ "$total" -gt 0 ]; then
+      details="${details} This deployment contains: $(friendly_summary "$PACKAGE_XML")."
+    fi
+    details="${details} Deletions: $(friendly_summary "$DESTRUCTIVE_XML")."
+  elif [ "$total" -gt 0 ]; then
     result="PASSED"
     details="This deployment contains: $(friendly_summary "$PACKAGE_XML")."
-    if [ "$has_destructive" = "true" ]; then
-      details="${details} Deletions: $(friendly_summary "$DESTRUCTIVE_XML")."
-    fi
   else
     details="No deployable changes detected"
   fi

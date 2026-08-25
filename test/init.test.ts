@@ -25,6 +25,7 @@ const BUILD_SCRIPTS = [
   "build/package.sh",
   "build/merge.sh",
   "build/format-commit.sh",
+  "build/destructive-guard.sh",
   "build/schedule.sh",
 ] as const;
 

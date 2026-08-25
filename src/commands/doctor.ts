@@ -17,6 +17,7 @@ export interface DoctorCheck {
 
 const REQUIRED_FILES = [
   "bitbucket-pipelines.yml",
+  "build/destructive-guard.sh",
   "build/format-commit.sh",
   "build/insights.sh",
   "build/merge.sh",
@@ -30,6 +31,7 @@ const REQUIRED_FILES = [
 ] as const;
 
 const REQUIRED_SHELL_FILES = [
+  "build/destructive-guard.sh",
   "build/format-commit.sh",
   "build/insights.sh",
   "build/merge.sh",
